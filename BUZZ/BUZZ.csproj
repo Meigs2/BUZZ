@@ -95,7 +95,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataClasses\" />
+    <Folder Include="ApiInteraction\" />
+    <Folder Include="Data\Models\" />
     <Folder Include="Resources\EveData\" />
     <Folder Include="UI\About\" />
     <Folder Include="UI\SplashScreen\" />
