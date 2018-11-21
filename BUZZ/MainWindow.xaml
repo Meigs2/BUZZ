@@ -9,13 +9,16 @@
     <Grid>
         <DockPanel>
             <Grid Margin="5" DockPanel.Dock="Top">
-                <Menu>
+                <Menu HorizontalAlignment="Left" VerticalAlignment="Center">
                     <MenuItem Header="File">
                         <MenuItem x:Name="ExitMenuItem" Header="Exit BUZZ"></MenuItem>
                     </MenuItem>
                     <MenuItem Header="Characters">
                         <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage Characters"/>
                     </MenuItem>
+                </Menu>
+                <Menu HorizontalAlignment="Right">
+                    <MenuItem x:Name="AboutMenuitem" Header="About"/>
                 </Menu>
             </Grid>
             <Grid>
