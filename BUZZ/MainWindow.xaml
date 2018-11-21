@@ -7,6 +7,20 @@
         mc:Ignorable="d"
         Title="BUZZ" Height="500" Width="300">
     <Grid>
-        
+        <DockPanel>
+            <Grid Margin="5" DockPanel.Dock="Top">
+                <Menu>
+                    <MenuItem Header="File">
+                        <MenuItem x:Name="ExitMenuItem" Header="Exit BUZZ"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Characters">
+                        <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage Characters"/>
+                    </MenuItem>
+                </Menu>
+            </Grid>
+            <Grid>
+
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>
