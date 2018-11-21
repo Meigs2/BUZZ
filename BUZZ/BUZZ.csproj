@@ -96,8 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataClasses\" />
-    <Folder Include="Resources\" />
-    <Folder Include="UI\" />
+    <Folder Include="Resources\EveData\" />
+    <Folder Include="UI\About\" />
+    <Folder Include="UI\SplashScreen\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
