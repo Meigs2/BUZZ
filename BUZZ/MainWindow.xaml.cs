@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BUZZ.Properties;
+using EVEStandard;
+using EVEStandard.Enumerations;
 
 namespace BUZZ
 {
@@ -22,7 +25,22 @@ namespace BUZZ
     {
         public MainWindow()
         {
+
             InitializeComponent();
+        }
+
+        private void AboutMenuitem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var esiClient = new EVEStandardAPI(
+                "BUZZ",
+                DataSource.Tranquility,
+                TimeSpan.FromSeconds(30),
+                "https://meigs2.github.io/ESICallback/",
+                "a8c4bd8f30444c65b2c68d0eb886c545"
+                );
+
+            var verificationWindow = new UI.VerificationWindow(esiClient);
+            verificationWindow.ShowDialog();
         }
     }
 }
