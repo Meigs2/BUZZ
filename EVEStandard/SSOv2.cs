@@ -9,6 +9,9 @@ using System.Web;
 using EVEStandard.Enumerations;
 using EVEStandard.Models.SSO;
 using Newtonsoft.Json;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace EVEStandard
 {
@@ -59,7 +62,7 @@ namespace EVEStandard
             CallbackUri = callbackUri;
             ClientId = clientId;
             this.dataSource = dataSource;
-            RandomString = HttpUtility.UrlEncode(GenerateRandomString(32));
+            RandomString = GenerateRandomString(32);
             Console.WriteLine(ASCIIEncoding.Unicode.GetByteCount(RandomString).ToString());
         }
 
@@ -75,6 +78,8 @@ namespace EVEStandard
         internal string SecretKey { get; }
 
         internal string RandomString { get; }
+
+        private string CodeVerifier { get; set; }
 
         /// <summary>
         /// Generates the URL you should have users click on with one of the EVE Online provided button images.
@@ -108,11 +113,13 @@ namespace EVEStandard
                 ExpectedState = state ?? ""
             };
 
-            //Generate code challenge
+            // Generate code challenge
+            CodeVerifier = Base64UrlEncoder.Encode(RandomString);
+
             SHA256 hasher = new SHA256CryptoServiceProvider();
-            var hashresult = hasher.ComputeHash(Encoding.ASCII.GetBytes(
-                (HttpUtility.UrlEncode(Convert.ToBase64String(Encoding.ASCII.GetBytes(RandomString))))));
-            var codeChallenge = HttpUtility.UrlEncode(Convert.ToBase64String(hashresult));
+            var hashresult = hasher.ComputeHash(Encoding.ASCII.GetBytes(CodeVerifier));
+
+            var codeChallenge = Base64UrlEncoder.Encode(hashresult);
 
 
             model.SignInURI = GetBaseURL() + SSO_AUTHORIZE + "response_type=code&redirect_uri=" + HttpUtility.UrlEncode(CallbackUri) +
@@ -154,7 +161,7 @@ namespace EVEStandard
                     new KeyValuePair<string, string>("grant_type", "authorization_code"),
                     new KeyValuePair<string, string>("code", model.AuthorizationCode),
                     new KeyValuePair<string, string>("client_id",ClientId),
-                    new KeyValuePair<string, string>("code_verifier", HttpUtility.UrlEncode(Convert.ToBase64String(Encoding.ASCII.GetBytes(RandomString))))
+                    new KeyValuePair<string, string>("code_verifier", CodeVerifier)
                 });
                 var request = new HttpRequestMessage
                 {
@@ -164,7 +171,12 @@ namespace EVEStandard
                 };
 
                 var response = await http.SendAsync(request).ConfigureAwait(false);
+
+                var responseHandler = new JwtSecurityTokenHandler();
+
+                var token = responseHandler.ReadToken(await response.Content.ReadAsStringAsync());
                 return JsonConvert.DeserializeObject<AccessTokenDetails>(await response.Content.ReadAsStringAsync());
+
             }
             catch (Exception inner)
             {
