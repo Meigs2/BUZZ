@@ -150,6 +150,9 @@ namespace EVEStandard
                 request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
                 var response = await http.SendAsync(request).ConfigureAwait(false);
+
+                Console.WriteLine(await response.Content.ReadAsStringAsync());
+
                 return JsonConvert.DeserializeObject<AccessTokenDetails>(await response.Content.ReadAsStringAsync());
             }
             catch (Exception inner)
@@ -159,7 +162,7 @@ namespace EVEStandard
             }
         }
 
-        /// <summary>
+        /// <summary>5
         /// If your access token has expired and you need a new one you can pass the <c>AccessTokenDetails</c> POCO here, with a valid refresh token, to retrieve a new access token.
         /// </summary>
         /// <param name="refreshToken">The refresh token you want to use to get a new access token.</param>

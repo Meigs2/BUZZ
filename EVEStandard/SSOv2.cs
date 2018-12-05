@@ -11,6 +11,8 @@ using EVEStandard.Models.SSO;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.IO.Compression;
 using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace EVEStandard
@@ -171,11 +173,37 @@ namespace EVEStandard
                 };
 
                 var response = await http.SendAsync(request).ConfigureAwait(false);
+                var responseStream = await response.Content.ReadAsStreamAsync();
+                StreamReader reader = new StreamReader(new GZipStream(responseStream, CompressionMode.Decompress), Encoding.Default);
 
-                var responseHandler = new JwtSecurityTokenHandler();
+                var output = reader.ReadToEnd();
 
-                var token = responseHandler.ReadToken(await response.Content.ReadAsStringAsync());
-                return JsonConvert.DeserializeObject<AccessTokenDetails>(await response.Content.ReadAsStringAsync());
+                var JwtHandler = new JwtSecurityTokenHandler();
+
+                var accessTokenDetails = JsonConvert.DeserializeObject<AccessTokenDetails>(output);
+
+                var test = JwtHandler.ReadToken(accessTokenDetails.AccessToken) as JwtSecurityToken;
+
+                string accessTokenString = string.Empty;
+
+                foreach (var claim in test.Claims)
+                {
+                    if (claim.Type == "azp")
+                    {
+                        accessTokenString = claim.Value;
+                        break;
+                    }
+                }
+
+                var accessToken = new AccessTokenDetails()
+                {
+                    AccessToken = accessTokenString,
+                    ExpiresIn = accessTokenDetails.ExpiresIn,
+                    RefreshToken = accessTokenDetails.RefreshToken,
+                    TokenType = accessTokenDetails.TokenType
+                };
+
+                return accessToken;
 
             }
             catch (Exception inner)
@@ -185,7 +213,7 @@ namespace EVEStandard
             }
         }
 
-        /// <summary>
+        /// <summary> 
         /// If your access token has expired and you need a new one you can pass the <c>AccessTokenDetails</c> POCO here, with a valid refresh token, to retrieve a new access token.
         /// </summary>
         /// <param name="refreshToken">The refresh token you want to use to get a new access token.</param>

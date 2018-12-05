@@ -31,16 +31,17 @@ namespace BUZZ
 
         private void AboutMenuitem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var esiClient = new EVEStandardAPI(
+            var esiClientv2 = new EVEStandardAPI(
                 "BUZZ",
                 DataSource.Tranquility,
                 TimeSpan.FromSeconds(30),
                 "https://meigs2.github.io/ESICallback/",
                 "a8c4bd8f30444c65b2c68d0eb886c545"
-                );
+            );
 
-            var verificationWindow = new UI.VerificationWindow(esiClient);
+            var verificationWindow = new UI.VerificationWindow(esiClientv2);
             verificationWindow.ShowDialog();
+
         }
     }
 }
