@@ -14,7 +14,7 @@
                         <MenuItem x:Name="ExitMenuItem" Header="Exit BUZZ"></MenuItem>
                     </MenuItem>
                     <MenuItem Header="Characters">
-                        <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage Characters" PreviewMouseDown="AboutMenuitem_OnMouseLeftButtonDown"/>
+                        <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage Characters" PreviewMouseDown="ManageCharactersMenuButton_OnMouseDown"/>
                     </MenuItem>
                 </Menu>
                 <Menu HorizontalAlignment="Right">

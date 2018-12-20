@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using BUZZ.Properties;
 using EVEStandard;
 using EVEStandard.Enumerations;
+using EVEStandard.Models.API;
 
 namespace BUZZ
 {
@@ -25,23 +26,22 @@ namespace BUZZ
     {
         public MainWindow()
         {
-
             InitializeComponent();
         }
 
-        private void AboutMenuitem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void AboutMenuitem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var esiClientv2 = new EVEStandardAPI(
-                "BUZZ",
-                DataSource.Tranquility,
-                TimeSpan.FromSeconds(30),
-                "https://meigs2.github.io/ESICallback/",
-                "a8c4bd8f30444c65b2c68d0eb886c545"
-            );
-
-            var verificationWindow = new UI.VerificationWindow(esiClientv2);
+            var verificationWindow = new UI.VerificationWindow(Utilities.EsiData.EsiClient);
             verificationWindow.ShowDialog();
 
+            var dto = new AuthDTO()
+            {
+                AccessToken = verificationWindow.AccessTokenDetails,
+                CharacterId = 97150107,
+                Scopes = Scopes.ESI_LOCATION_READ_LOCATION_1
+            };
+
+            var a = await Utilities.EsiData.EsiClient.Location.GetCharacterLocationV1Async(dto);
         }
     }
 }

@@ -40,7 +40,6 @@ namespace BUZZ.UI
 
                 var authorization = new Authorization {AuthorizationCode = AuthCodeTextBox.Text};
                 AccessTokenDetails = await _client.SSOv2.VerifyAuthorizationAsync(authorization);
-                CharacterDetails = await _client.SSOv2.GetCharacterDetailsAsync(AccessTokenDetails.AccessToken);
                 Close();
             }
             catch (Exception error)

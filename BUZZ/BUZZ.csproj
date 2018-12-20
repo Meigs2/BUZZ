@@ -109,7 +109,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\Models\UserDataModel.cs" />
+    <Compile Include="Data\UserData\DataHandler.cs" />
     <Compile Include="UI\Verification\VerificationWindow.xaml.cs" />
+    <Compile Include="Utilities\EsiData.cs" />
     <Compile Include="Utilities\EsiScopes.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -146,6 +149,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Data\Static\Universe\mapSolarSystems.csv" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -157,9 +161,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ApiInteraction\" />
-    <Folder Include="Data\Models\" />
     <Folder Include="Resources\EveData\" />
     <Folder Include="UI\About\" />
+    <Folder Include="UI\CharacterManagement\" />
     <Folder Include="UI\SplashScreen\" />
   </ItemGroup>
   <ItemGroup>

@@ -13,8 +13,7 @@
                        Source="../../Resources/Images/LoginButton.png"
                        MaxWidth="300" MouseDown="LoginImage_Click" Cursor="Hand" Margin="30,0,30,30" />
                 <Grid HorizontalAlignment="Center">
-                    <Label
-                            Content="Enter the code displayed in the URL after signing in below and hit the 'Accept' Button." />
+                    <Label Content="Enter the code displayed in your web browser after signing in." />
                 </Grid>
                 <TextBox x:Name="AuthCodeTextBox" MaxWidth="500" MinWidth="700" Background="LightGray" Margin="10" />
                 <Button x:Name="AcceptButton" Content="Accept" MaxWidth="200" Click="AcceptButton_ClickAsync" />

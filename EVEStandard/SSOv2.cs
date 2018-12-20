@@ -45,7 +45,6 @@ namespace EVEStandard
         /// </summary>
         /// <param name="callbackUri">The Callback URL that you provided in your ESI application. If this doesn't match with what ESI has then SSO auth will fail.</param>
         /// <param name="clientId">The Client Id you were assigned in your ESI application.</param>
-        /// <param name="secretKey">The Secret Key you were assigned in your ESI application, this should NEVER be human-readable in your application.</param>
         /// <param name="dataSource"></param>
         /// <exception cref="EVEStandardException" >Called when any of the parameters is null or empty.</exception>
         /// <remarks>
@@ -117,12 +116,9 @@ namespace EVEStandard
 
             // Generate code challenge
             CodeVerifier = Base64UrlEncoder.Encode(RandomString);
-
             SHA256 hasher = new SHA256CryptoServiceProvider();
             var hashresult = hasher.ComputeHash(Encoding.ASCII.GetBytes(CodeVerifier));
-
             var codeChallenge = Base64UrlEncoder.Encode(hashresult);
-
 
             model.SignInURI = GetBaseURL() + SSO_AUTHORIZE + "response_type=code&redirect_uri=" + HttpUtility.UrlEncode(CallbackUri) +
                               "&client_id=" + ClientId + "&scope=" + HttpUtility.UrlEncode(String.Join(" ", scopes)) +
@@ -134,6 +130,7 @@ namespace EVEStandard
 
         /// <summary>
         /// Once your application receives the callback from SSO, you call this to verify the state is the expected one to be returned and to request an access code with the authenication code you were given.
+        /// Note, the access_token returned in the AccessTokenDetails is a JWT and 
         /// </summary>
         /// <param name="model">The <c>Authorization</c> POCO with at least, ExpectedState, ReturnedState, and AuthorizationCode properties set.</param>
         /// <returns><c>AccessTokenDetails</c></returns>
@@ -157,7 +154,6 @@ namespace EVEStandard
 
             try
             {
-
                 var stringContent = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("grant_type", "authorization_code"),
@@ -171,44 +167,16 @@ namespace EVEStandard
                     Method = HttpMethod.Post,
                     Content = stringContent
                 };
-
                 var response = await http.SendAsync(request).ConfigureAwait(false);
+
                 var responseStream = await response.Content.ReadAsStreamAsync();
                 StreamReader reader = new StreamReader(new GZipStream(responseStream, CompressionMode.Decompress), Encoding.Default);
-
                 var output = reader.ReadToEnd();
 
-                var JwtHandler = new JwtSecurityTokenHandler();
-
-                var accessTokenDetails = JsonConvert.DeserializeObject<AccessTokenDetails>(output);
-
-                var test = JwtHandler.ReadToken(accessTokenDetails.AccessToken) as JwtSecurityToken;
-
-                string accessTokenString = string.Empty;
-
-                foreach (var claim in test.Claims)
-                {
-                    if (claim.Type == "azp")
-                    {
-                        accessTokenString = claim.Value;
-                        break;
-                    }
-                }
-
-                var accessToken = new AccessTokenDetails()
-                {
-                    AccessToken = accessTokenString,
-                    ExpiresIn = accessTokenDetails.ExpiresIn,
-                    RefreshToken = accessTokenDetails.RefreshToken,
-                    TokenType = accessTokenDetails.TokenType
-                };
-
-                return accessToken;
-
+                return JsonConvert.DeserializeObject<AccessTokenDetails>(output);
             }
             catch (Exception inner)
             {
-
                 throw new EVEStandardException("An error occured with some part of the http request/response", inner);
             }
         }
@@ -223,11 +191,12 @@ namespace EVEStandard
         {
             try
             {
-                var byteArray = Encoding.ASCII.GetBytes(ClientId + ":" + SecretKey);
                 var stringContent = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                    new KeyValuePair<string, string>("refresh_token", refreshToken)
+                    new KeyValuePair<string, string>("refresh_token", refreshToken),
+                    new KeyValuePair<string, string>("client_id", ClientId),
+                    new KeyValuePair<string, string>("scope", "")
                 });
                 var request = new HttpRequestMessage
                 {
@@ -235,14 +204,16 @@ namespace EVEStandard
                     Method = HttpMethod.Post,
                     Content = stringContent
                 };
-                request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
                 var response = await http.SendAsync(request).ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<AccessTokenDetails>(await response.Content.ReadAsStringAsync());
+
+                var responseStream = await response.Content.ReadAsStreamAsync();
+                StreamReader reader = new StreamReader(new GZipStream(responseStream, CompressionMode.Decompress), Encoding.Default);
+                var output = reader.ReadToEnd();
+
+                return JsonConvert.DeserializeObject<AccessTokenDetails>(output);
             }
             catch (Exception inner)
             {
-
                 throw new EVEStandardException("An error occured with some part of the http request/response", inner);
             }
         }
@@ -269,7 +240,6 @@ namespace EVEStandard
             }
             catch (Exception inner)
             {
-
                 throw new EVEStandardException("An error occured with some part of the http request/response", inner);
             }
         }
@@ -303,18 +273,12 @@ namespace EVEStandard
             }
             catch (Exception inner)
             {
-
                 throw new EVEStandardException("An error occured with some part of the http request/response", inner);
             }
         }
 
-        // ReSharper disable once InconsistentNaming
-        private string GetBaseURL()
-        {
-            return dataSource == DataSource.Singularity ? SINGULARITY_SSO_BASE_URL : TRANQUILITY_SSO_BASE_URL;
-        }
-
         // Attributed to Stack Exchange 1344221
+        // generates a criptographically safe 32 bit random string.
         private string GenerateRandomString(int size)
         {
             char[] chars =
@@ -330,6 +294,12 @@ namespace EVEStandard
                 result.Append(chars[b % (chars.Length)]);
             }
             return result.ToString();
+        }
+
+        // ReSharper disable once InconsistentNaming
+        private string GetBaseURL()
+        {
+            return dataSource == DataSource.Singularity ? SINGULARITY_SSO_BASE_URL : TRANQUILITY_SSO_BASE_URL;
         }
     }
 }
