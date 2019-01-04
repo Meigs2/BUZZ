@@ -29,7 +29,7 @@ namespace BUZZ
             InitializeComponent();
         }
 
-        private async void AboutMenuitem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void MenuItem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var verificationWindow = new UI.VerificationWindow(Utilities.EsiData.EsiClient);
             verificationWindow.ShowDialog();
