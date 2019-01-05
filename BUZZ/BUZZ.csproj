@@ -173,11 +173,5 @@
   <ItemGroup>
     <Resource Include="Resources\Images\LoginButton.png" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EVEStandard\EVEStandard.csproj">
-      <Project>{2c922281-1da4-4c59-81b5-645762ca80c8}</Project>
-      <Name>EVEStandard</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

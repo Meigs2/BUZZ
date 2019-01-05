@@ -1,19 +1,16 @@
-﻿using System;
+﻿using EVEStandard.Enumerations;
+using EVEStandard.Models.SSO;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using EVEStandard.Enumerations;
-using EVEStandard.Models.SSO;
-using Newtonsoft.Json;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.IO.Compression;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace EVEStandard
 {
@@ -35,7 +32,6 @@ namespace EVEStandard
         private const string SINGULARITY_SSO_BASE_URL = "https://sisilogin.testeveonline.com";
         private const string SSO_AUTHORIZE = "/v2/oauth/authorize/?";
         private const string SSO_TOKEN = "/v2/oauth/token";
-        private const string SSO_VERIFY = "/v2/oauth/verify";
         private const string SSO_REVOKE = "/v2/oauth/revoke";
 
         private readonly DataSource dataSource;
@@ -45,6 +41,7 @@ namespace EVEStandard
         /// </summary>
         /// <param name="callbackUri">The Callback URL that you provided in your ESI application. If this doesn't match with what ESI has then SSO auth will fail.</param>
         /// <param name="clientId">The Client Id you were assigned in your ESI application.</param>
+        /// <param name="secretKey">The Secret Key you were assigned in your ESI application, this should NEVER be human-readable in your application.</param>
         /// <param name="dataSource"></param>
         /// <exception cref="EVEStandardException" >Called when any of the parameters is null or empty.</exception>
         /// <remarks>
@@ -53,18 +50,23 @@ namespace EVEStandard
         ///     </see>
         ///     You will probably want to create at least two applications, one for local development and one for production since the <paramref name="callbackUri"/> requires to match in the callback.
         /// </remarks>
-        internal SSOv2(string callbackUri, string clientId, DataSource dataSource)
+        internal SSOv2(string callbackUri, string clientId, string secretKey, DataSource dataSource, SSOMode ssoMode)
         {
             if (string.IsNullOrEmpty(callbackUri) || string.IsNullOrEmpty(clientId))
             {
-                throw new EVEStandardException("SSO should be initialized with non-null and non-empty strings. callbackUri: " + callbackUri + " clientId: " + clientId);
+                throw new EVEStandardException("SSO should be initialized with non-null and non-empty strings. callbackUri: " + callbackUri + " clientId: " + clientId + " secretKey: " + secretKey);
+            }
+
+            if (string.IsNullOrEmpty(secretKey) && ssoMode != SSOMode.Native)
+            {
+                throw new EVEStandardException("SSO should be initialized with non-null and non-empty secretKey.");
             }
 
             CallbackUri = callbackUri;
             ClientId = clientId;
+            SecretKey = secretKey;
+            SsoMode = ssoMode;
             this.dataSource = dataSource;
-            RandomString = GenerateRandomString(32);
-            Console.WriteLine(ASCIIEncoding.Unicode.GetByteCount(RandomString).ToString());
         }
 
         internal static HttpClient HTTP
@@ -78,9 +80,7 @@ namespace EVEStandard
 
         internal string SecretKey { get; }
 
-        internal string RandomString { get; }
-
-        private string CodeVerifier { get; set; }
+        internal SSOMode SsoMode { get; }
 
         /// <summary>
         /// Generates the URL you should have users click on with one of the EVE Online provided button images.
@@ -114,23 +114,20 @@ namespace EVEStandard
                 ExpectedState = state ?? ""
             };
 
-            // Generate code challenge
-            CodeVerifier = Base64UrlEncoder.Encode(RandomString);
-            SHA256 hasher = new SHA256CryptoServiceProvider();
-            var hashresult = hasher.ComputeHash(Encoding.ASCII.GetBytes(CodeVerifier));
-            var codeChallenge = Base64UrlEncoder.Encode(hashresult);
-
             model.SignInURI = GetBaseURL() + SSO_AUTHORIZE + "response_type=code&redirect_uri=" + HttpUtility.UrlEncode(CallbackUri) +
-                              "&client_id=" + ClientId + "&scope=" + HttpUtility.UrlEncode(String.Join(" ", scopes)) +
-                              "&code_challenge=" + codeChallenge + "&code_challenge_method=S256" +
-                              "&state=" + HttpUtility.UrlEncode(model.ExpectedState);
+                "&client_id=" + ClientId + "&scope=" + HttpUtility.UrlEncode(String.Join(" ", scopes)) + "&state=" + HttpUtility.UrlEncode(model.ExpectedState);
+
+            if (SsoMode == SSOMode.Native)
+            {
+                model.CodeVerifier = GenerateCodeVerifier();
+                model.SignInURI += "&code_challenge=" + GenerateCodeChallenge(model.CodeVerifier) + "&code_challenge_method=S256";
+            }
 
             return model;
         }
 
         /// <summary>
         /// Once your application receives the callback from SSO, you call this to verify the state is the expected one to be returned and to request an access code with the authenication code you were given.
-        /// Note, the access_token returned in the AccessTokenDetails is a JWT and 
         /// </summary>
         /// <param name="model">The <c>Authorization</c> POCO with at least, ExpectedState, ReturnedState, and AuthorizationCode properties set.</param>
         /// <returns><c>AccessTokenDetails</c></returns>
@@ -154,34 +151,48 @@ namespace EVEStandard
 
             try
             {
-                var stringContent = new FormUrlEncodedContent(new[]
+                var values = new List<KeyValuePair<string, string>>()
                 {
                     new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                    new KeyValuePair<string, string>("code", model.AuthorizationCode),
-                    new KeyValuePair<string, string>("client_id",ClientId),
-                    new KeyValuePair<string, string>("code_verifier", CodeVerifier)
-                });
+                    new KeyValuePair<string, string>("code", model.AuthorizationCode)
+                };
+
+                if (SsoMode == SSOMode.Native)
+                {
+                    values.Add(new KeyValuePair<string, string>("client_id", ClientId));
+                    values.Add(new KeyValuePair<string, string>("code_verifier", model.CodeVerifier));
+                }
+
+                var stringContent = new FormUrlEncodedContent(values);                
+
                 var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(GetBaseURL() + SSO_TOKEN),
                     Method = HttpMethod.Post,
                     Content = stringContent
                 };
+
+                request.Headers.Add("Host", GetBaseURL().TrimStart("https://".ToCharArray()));
+
+                if (SsoMode != SSOMode.Native)
+                {
+                    var byteArray = Encoding.ASCII.GetBytes(ClientId + ":" + SecretKey);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                }
+
                 var response = await http.SendAsync(request).ConfigureAwait(false);
 
-                var responseStream = await response.Content.ReadAsStreamAsync();
-                StreamReader reader = new StreamReader(new GZipStream(responseStream, CompressionMode.Decompress), Encoding.Default);
-                var output = reader.ReadToEnd();
-
-                return JsonConvert.DeserializeObject<AccessTokenDetails>(output);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<AccessTokenDetails>(responseContent);
             }
             catch (Exception inner)
             {
+
                 throw new EVEStandardException("An error occured with some part of the http request/response", inner);
             }
         }
 
-        /// <summary> 
+        /// <summary>
         /// If your access token has expired and you need a new one you can pass the <c>AccessTokenDetails</c> POCO here, with a valid refresh token, to retrieve a new access token.
         /// </summary>
         /// <param name="refreshToken">The refresh token you want to use to get a new access token.</param>
@@ -191,29 +202,38 @@ namespace EVEStandard
         {
             try
             {
-                var stringContent = new FormUrlEncodedContent(new[]
+                var values = new List<KeyValuePair<string, string>>()
                 {
                     new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                    new KeyValuePair<string, string>("refresh_token", refreshToken),
-                    new KeyValuePair<string, string>("client_id", ClientId),
-                    new KeyValuePair<string, string>("scope", "")
-                });
+                    new KeyValuePair<string, string>("refresh_token", refreshToken)
+                };
+
+                if (SsoMode == SSOMode.Native)
+                {
+                    values.Add(new KeyValuePair<string, string>("client_id", ClientId));
+                }
+
+                var stringContent = new FormUrlEncodedContent(values);
+
                 var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(GetBaseURL() + SSO_TOKEN),
                     Method = HttpMethod.Post,
                     Content = stringContent
                 };
+
+                if (SsoMode != SSOMode.Native)
+                {
+                    var byteArray = Encoding.ASCII.GetBytes(ClientId + ":" + SecretKey);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                }
+
                 var response = await http.SendAsync(request).ConfigureAwait(false);
-
-                var responseStream = await response.Content.ReadAsStreamAsync();
-                StreamReader reader = new StreamReader(new GZipStream(responseStream, CompressionMode.Decompress), Encoding.Default);
-                var output = reader.ReadToEnd();
-
-                return JsonConvert.DeserializeObject<AccessTokenDetails>(output);
+                return JsonConvert.DeserializeObject<AccessTokenDetails>(await response.Content.ReadAsStringAsync());
             }
             catch (Exception inner)
             {
+
                 throw new EVEStandardException("An error occured with some part of the http request/response", inner);
             }
         }
@@ -224,24 +244,27 @@ namespace EVEStandard
         /// <param name="accessToken">The access token used to retrieve character details.</param>
         /// <returns><c>CharacterDetails</c></returns>
         /// <exception cref="EVEStandardException" ></exception>
-        public async Task<CharacterDetails> GetCharacterDetailsAsync(string accessToken)
+        public CharacterDetails GetCharacterDetailsAsync(string accessToken)
         {
-            try
-            {
-                var request = new HttpRequestMessage
-                {
-                    RequestUri = new Uri(GetBaseURL() + SSO_VERIFY),
-                    Method = HttpMethod.Get
-                };
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
 
-                var verifyResponse = await http.SendAsync(request).ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<CharacterDetails>(await verifyResponse.Content.ReadAsStringAsync());
-            }
-            catch (Exception inner)
+            var sub = token.Subject;
+            var name = token.Claims.First(c => c.Type == "name").Value;
+            var scp = token.Claims.First(c => c.Type == "scp").Value;
+            var owner = token.Claims.First(c => c.Type == "owner").Value;
+
+            var characterDetails = new CharacterDetails()
             {
-                throw new EVEStandardException("An error occured with some part of the http request/response", inner);
-            }
+                CharacterId = Int32.Parse(sub.Split(':')[2]),
+                CharacterName = name,
+                CharacterOwnerHash = owner,
+                ExpiresOn = token.ValidTo,
+                Scopes = scp,
+                TokenType = "JWT"
+            };
+
+            return characterDetails;            
         }
 
         /// <summary>
@@ -250,56 +273,60 @@ namespace EVEStandard
         /// <param name="type">Was it an access or refresh token you are trying to revoke?</param>
         /// <param name="token">The token you are trying to revoke.</param>
         /// <returns>True if the token was revoked.</returns>
-        public async Task<bool> RevokeTokenAsync(RevokeType type, string token)
+        public async Task<bool> RevokeRefreshTokenAsync(string token)
         {
             try
-            {
-                var byteArray = Encoding.ASCII.GetBytes(ClientId + ":" + SecretKey);
+            {                
                 var stringContent = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("token_type_hint", type == RevokeType.ACCESS_TOKEN ? "access_token" : "refresh_token"),
+                    new KeyValuePair<string, string>("token_type_hint","refresh_token"),
                     new KeyValuePair<string, string>("token", token)
                 });
+
                 var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(GetBaseURL() + SSO_REVOKE),
                     Method = HttpMethod.Post,
                     Content = stringContent
                 };
-                request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+                if (SsoMode != SSOMode.Native)
+                {
+                    var byteArray = Encoding.ASCII.GetBytes(ClientId + ":" + SecretKey);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                }
+                else
+                {
+                    // Not supported by ESI yet.
+                }
 
                 var response = await http.SendAsync(request);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception inner)
             {
+
                 throw new EVEStandardException("An error occured with some part of the http request/response", inner);
             }
-        }
-
-        // Attributed to Stack Exchange 1344221
-        // generates a criptographically safe 32 bit random string.
-        private string GenerateRandomString(int size)
-        {
-            char[] chars =
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
-            byte[] data = new byte[size];
-            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
-            {
-                crypto.GetBytes(data);
-            }
-            StringBuilder result = new StringBuilder(size);
-            foreach (byte b in data)
-            {
-                result.Append(chars[b % (chars.Length)]);
-            }
-            return result.ToString();
         }
 
         // ReSharper disable once InconsistentNaming
         private string GetBaseURL()
         {
             return dataSource == DataSource.Singularity ? SINGULARITY_SSO_BASE_URL : TRANQUILITY_SSO_BASE_URL;
+        }
+
+        private string GenerateCodeVerifier()
+        {
+            var randomBytes = Encoding.ASCII.GetBytes(Guid.NewGuid().ToString().Replace("-", ""));
+            return (Convert.ToBase64String(randomBytes)).Replace("=", "");
+        }
+
+        private string GenerateCodeChallenge(string codeVerifier)
+        {
+            var hasher = new SHA256Managed();
+            var hashedVerifierBytes = hasher.ComputeHash(Encoding.ASCII.GetBytes(codeVerifier));
+            return (Convert.ToBase64String(hashedVerifierBytes)).Replace("=", "").Replace("+", "-").Replace("/", "_");
         }
     }
 }
