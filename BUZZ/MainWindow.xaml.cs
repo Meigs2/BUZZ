@@ -37,7 +37,7 @@ namespace BUZZ
             var dto = new AuthDTO()
             {
                 AccessToken = verificationWindow.AccessTokenDetails,
-                CharacterId = 97150107,
+                CharacterId = verificationWindow.CharacterDetails.CharacterId,
                 Scopes = Scopes.ESI_LOCATION_READ_LOCATION_1
             };
 

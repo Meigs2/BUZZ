@@ -21,15 +21,15 @@ namespace BUZZ.UI
         {
             InitializeComponent();
             _client = client;
-            Uri = client.SSOv2.AuthorizeToEVEUri(Utilities.EsiScopes.Scopes);
+            authorization = client.SSOv2.AuthorizeToEVEUri(Utilities.EsiScopes.Scopes);
         }
 
-        private Authorization Uri { get; }
+        private Authorization authorization { get; }
 
 
         private void LoginImage_Click(object sender, MouseButtonEventArgs e)
         {
-            Process.Start(Uri.SignInURI);
+            Process.Start(authorization.SignInURI);
         }
 
         private async void AcceptButton_ClickAsync(object sender, RoutedEventArgs e)
@@ -38,8 +38,10 @@ namespace BUZZ.UI
             {
                 if (AuthCodeTextBox.Text == string.Empty) return;
 
-                var authorization = new Authorization {AuthorizationCode = AuthCodeTextBox.Text};
+                authorization.AuthorizationCode = AuthCodeTextBox.Text;
+                authorization.ExpectedState = string.Empty; // Expected state is set to empty, as we dont require the user to provide it from the returned URL
                 AccessTokenDetails = await _client.SSOv2.VerifyAuthorizationAsync(authorization);
+                CharacterDetails = _client.SSOv2.GetCharacterDetailsAsync(AccessTokenDetails.AccessToken);
                 Close();
             }
             catch (Exception error)

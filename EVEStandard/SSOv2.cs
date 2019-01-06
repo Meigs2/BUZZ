@@ -133,7 +133,7 @@ namespace EVEStandard
         /// <returns><c>AccessTokenDetails</c></returns>
         /// <exception cref="EVEStandardException" ></exception>
         public async Task<AccessTokenDetails> VerifyAuthorizationAsync(Authorization model)
-        {
+            {
             if (model.ReturnedState == null)
             {
                 model.ReturnedState = "";
