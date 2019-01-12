@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BUZZ.Core.CharacterManagement;
 using BUZZ.Properties;
 using EVEStandard;
 using EVEStandard.Enumerations;
@@ -29,19 +30,10 @@ namespace BUZZ
             InitializeComponent();
         }
 
-        private async void MenuItem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MenuItem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var verificationWindow = new UI.VerificationWindow(Utilities.EsiData.EsiClient);
-            verificationWindow.ShowDialog();
-
-            var dto = new AuthDTO()
-            {
-                AccessToken = verificationWindow.AccessTokenDetails,
-                CharacterId = verificationWindow.CharacterDetails.CharacterId,
-                Scopes = Scopes.ESI_LOCATION_READ_LOCATION_1
-            };
-
-            var a = await Utilities.EsiData.EsiClient.Location.GetCharacterLocationV1Async(dto);
+            var manager = new CharacterManagementWindow();
+            manager.ShowDialog();
         }
     }
 }

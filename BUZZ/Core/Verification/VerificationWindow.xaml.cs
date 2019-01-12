@@ -2,10 +2,12 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using BUZZ.Data;
+using BUZZ.Data.Models;
 using EVEStandard;
 using EVEStandard.Models.SSO;
 
-namespace BUZZ.UI
+namespace BUZZ.Core.Verification
 {
     /// <summary>
     ///     Interaction logic for VerificationWindow.xaml
@@ -13,23 +15,23 @@ namespace BUZZ.UI
     public partial class VerificationWindow
     {
         private readonly EVEStandardAPI _client;
-        public CharacterDetails CharacterDetails;
-        public AccessTokenDetails AccessTokenDetails;
+        public BuzzCharacter Character { get; set; } = new BuzzCharacter();
+        private Authorization Authorization { get; }
+
 
 
         public VerificationWindow(EVEStandardAPI client)
         {
             InitializeComponent();
-            _client = client;
-            authorization = client.SSOv2.AuthorizeToEVEUri(Utilities.EsiScopes.Scopes);
-        }
 
-        private Authorization authorization { get; }
+            _client = client;
+            Authorization = _client.SSOv2.AuthorizeToEVEUri(EsiScopes.Scopes);
+        }
 
 
         private void LoginImage_Click(object sender, MouseButtonEventArgs e)
         {
-            Process.Start(authorization.SignInURI);
+            Process.Start(Authorization.SignInURI);
         }
 
         private async void AcceptButton_ClickAsync(object sender, RoutedEventArgs e)
@@ -38,16 +40,18 @@ namespace BUZZ.UI
             {
                 if (AuthCodeTextBox.Text == string.Empty) return;
 
-                authorization.AuthorizationCode = AuthCodeTextBox.Text;
-                authorization.ExpectedState = string.Empty; // Expected state is set to empty, as we dont require the user to provide it from the returned URL
-                AccessTokenDetails = await _client.SSOv2.VerifyAuthorizationAsync(authorization);
-                CharacterDetails = _client.SSOv2.GetCharacterDetailsAsync(AccessTokenDetails.AccessToken);
+                Authorization.AuthorizationCode = AuthCodeTextBox.Text;
+                Authorization.ExpectedState = string.Empty; // Expected state is set to empty, as we don't require the user to provide it from the returned URL
+
+                Character.AccessTokenDetails = await _client.SSOv2.VerifyAuthorizationAsync(Authorization);
+                Character.CharacterDetails = _client.SSOv2.GetCharacterDetailsAsync(Character.AccessTokenDetails.AccessToken);
+
                 Close();
             }
             catch (Exception error)
             {
                 MessageBox.Show("Authorization verification failed, error message:\n" + error.Message +
-                                "\n Source: \n" + error.Source);
+                                "\n Source: \n" + error.Source + "\n\n Please click the image again and re-enter the code in the web prompt.");
             }
         }
     }

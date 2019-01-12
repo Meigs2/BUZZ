@@ -113,11 +113,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\Models\UserDataModel.cs" />
+    <Compile Include="Core\CharacterManagement\CharacterManager.cs" />
+    <Compile Include="Data\Models\AuthTokenDetails.cs" />
+    <Compile Include="Data\Models\BuzzCharacter.cs" />
     <Compile Include="Data\UserData\DataHandler.cs" />
-    <Compile Include="UI\Verification\VerificationWindow.xaml.cs" />
-    <Compile Include="Utilities\EsiData.cs" />
-    <Compile Include="Utilities\EsiScopes.cs" />
+    <Compile Include="Core\CharacterManagement\CharacterManagementWindow.xaml.cs">
+      <DependentUpon>CharacterManagementWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Verification\VerificationWindow.xaml.cs" />
+    <Compile Include="Data\EsiData.cs" />
+    <Compile Include="Data\EsiScopes.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -130,7 +135,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UI\Verification\VerificationWindow.xaml">
+    <Page Include="Core\CharacterManagement\CharacterManagementWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Verification\VerificationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -164,11 +173,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ApiInteraction\" />
+    <Folder Include="Core\About\" />
+    <Folder Include="Core\SplashScreen\" />
     <Folder Include="Resources\EveData\" />
-    <Folder Include="UI\About\" />
-    <Folder Include="UI\CharacterManagement\" />
-    <Folder Include="UI\SplashScreen\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\LoginButton.png" />

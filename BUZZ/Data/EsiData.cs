@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EVEStandard;
-using EVEStandard.Models.SSO;
 using EVEStandard.Enumerations;
+using EVEStandard.Models.SSO;
 
-namespace BUZZ.Utilities
+namespace BUZZ.Data
 {
     internal class EsiData
     {
