@@ -8,11 +8,11 @@ using EVEStandard.Models.SSO;
 
 namespace BUZZ.Data.Models
 {
-    [Serializable]
     public class BuzzCharacter
     {
         #region Properties
         
+        public bool IsEnabled { get; set; } = true;
         public AccessTokenDetails AccessTokenDetails { get; set; } = new AccessTokenDetails();
         public CharacterDetails CharacterDetails { get; set; } = new CharacterDetails();
 

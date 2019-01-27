@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="BuzzCharacterManagementWindow" Height="500" Width="350">
+        Title="CharacterManagementWindow" Height="500" Width="350"
+        Closing="CharacterManagementWindow_OnClosing">
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
@@ -12,8 +13,27 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="AddCharacterButton" Content="Add BuzzCharacter" VerticalAlignment="Bottom" Margin="5" Grid.Column="0" Click="AddCharacterButton_Click"/>
-                <Button x:Name="RemoveCharacterButton" Content="Remove BuzzCharacters" VerticalAlignment="Bottom" Margin="5" Grid.Column="1"/>
+                <Button x:Name="AddCharacterButton" Content="Add Character" VerticalAlignment="Bottom" Margin="5" Grid.Column="0" Click="AddCharacterButton_Click"/>
+                <Button x:Name="RemoveCharacterButton" Content="Remove Characters" VerticalAlignment="Bottom" Margin="5" Grid.Column="1" Click="RemoveCharacterButton_Click"/>
+            </Grid>
+            <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Center" TextAlignment="Center">
+                To delete a character, select character(s) with your mouse <LineBreak/>
+                and press "Remove Characters"
+            </TextBlock>
+            <Grid>
+                <DataGrid x:Name="DataGrid" Margin="5" AutoGenerateColumns="False" ItemsSource="{Binding CharacterList}" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Extended">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Active">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Name" Binding="{Binding CharacterName}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Character ID" Binding="{Binding CharacterDetails.CharacterId}" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </Grid>
         </DockPanel>
     </Grid>

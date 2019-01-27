@@ -28,6 +28,7 @@ namespace BUZZ
         public MainWindow()
         {
             InitializeComponent();
+            Utilities.Startup.PerformStartupActions();
         }
 
         private void MenuItem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

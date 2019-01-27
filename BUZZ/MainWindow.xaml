@@ -13,7 +13,7 @@
                     <MenuItem Header="File">
                         <MenuItem x:Name="ExitMenuItem" Header="Exit BUZZ"></MenuItem>
                     </MenuItem>
-                    <MenuItem Header="BuzzCharacters">
+                    <MenuItem Header="Characters">
                         <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage BuzzCharacters" PreviewMouseDown="MenuItem_OnMouseLeftButtonDown"/>
                     </MenuItem>
                 </Menu>

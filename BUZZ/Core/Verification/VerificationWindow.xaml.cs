@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using BUZZ.Core.CharacterManagement;
 using BUZZ.Data;
 using BUZZ.Data.Models;
 using EVEStandard;
@@ -45,6 +46,8 @@ namespace BUZZ.Core.Verification
 
                 Character.AccessTokenDetails = await _client.SSOv2.VerifyAuthorizationAsync(Authorization);
                 Character.CharacterDetails = _client.SSOv2.GetCharacterDetailsAsync(Character.AccessTokenDetails.AccessToken);
+
+                CharacterManager.CurrentInstance.CharacterList.Add(Character);
 
                 Close();
             }
