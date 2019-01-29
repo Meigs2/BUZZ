@@ -49,6 +49,17 @@ namespace BUZZ.Core.CharacterManagement
         {
             currentInstance = new CharacterManager();
             DeserializeCharacterData();
+            RefreshAccessTokensAsync();
+        }
+
+        private static async void RefreshAccessTokensAsync()
+        {
+            var tasks = new List<Task>();
+            foreach (var buzzCharacter in CharacterManager.currentInstance.CharacterList )
+            {
+                tasks.Add(buzzCharacter.RefreshAuthToken());
+            }
+            await Task.WhenAll(tasks);
         }
 
         private const string CharacterDataFilename = "Characters.bin";

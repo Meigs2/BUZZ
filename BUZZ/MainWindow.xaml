@@ -14,7 +14,8 @@
                         <MenuItem x:Name="ExitMenuItem" Header="Exit BUZZ"></MenuItem>
                     </MenuItem>
                     <MenuItem Header="Characters">
-                        <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage BuzzCharacters" PreviewMouseDown="MenuItem_OnMouseLeftButtonDown"/>
+                        <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage Characters" PreviewMouseDown="MenuItem_OnMouseLeftButtonDown"/>
+                        <MenuItem x:Name="CharacterLPViewer" Header="LP Viewer" PreviewMouseDown="CharacterLPViewer_Click"/>
                     </MenuItem>
                 </Menu>
                 <Menu HorizontalAlignment="Right">

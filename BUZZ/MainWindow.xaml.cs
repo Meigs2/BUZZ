@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BUZZ.Core.CharacterManagement;
+using BUZZ.Core.LPManager;
 using BUZZ.Properties;
 using EVEStandard;
 using EVEStandard.Enumerations;
@@ -35,6 +36,12 @@ namespace BUZZ
         {
             var manager = new CharacterManagementWindow();
             manager.ShowDialog();
+        }
+
+        private void CharacterLPViewer_Click(object sender, RoutedEventArgs e)
+        {
+            var lpViewer = new LpViewer();
+            lpViewer.Show();
         }
     }
 }

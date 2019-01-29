@@ -47,6 +47,16 @@ namespace BUZZ.Core.Verification
                 Character.AccessTokenDetails = await _client.SSOv2.VerifyAuthorizationAsync(Authorization);
                 Character.CharacterDetails = _client.SSOv2.GetCharacterDetailsAsync(Character.AccessTokenDetails.AccessToken);
 
+                foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
+                {
+                    if (buzzCharacter.CharacterName == Character.CharacterName)
+                    {
+                        MessageBox.Show("Character is already added");
+                        Close();
+                        return;
+                    }
+                }
+
                 CharacterManager.CurrentInstance.CharacterList.Add(Character);
 
                 Close();
