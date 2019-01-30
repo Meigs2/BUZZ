@@ -73,12 +73,12 @@ namespace BUZZ.Core.LPManager
             {
                 var currentLpCharacter = CharacterLpList[i];
                 lpData[i, 0] = CharacterManager.CurrentInstance.CharacterList[i].CharacterName;
-                for (int j = 0; j < corpIds.Count; j++)
+                for (int j = 0; j < corpNames.Count; j++)
                 {
                     lpData[i, j + 1] = 0.ToString();
                     foreach (var loyaltyPoint in currentLpCharacter)
                     {
-                        if (corpIds[j] == loyaltyPoint.CorporationId)
+                        if (corpNames[j].Id == loyaltyPoint.CorporationId)
                         {
                             lpData[i, j + 1 ] = loyaltyPoint.Points.ToString();
                             break;
