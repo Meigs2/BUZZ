@@ -8,7 +8,7 @@
     <Grid>
         <DockPanel>
             <Button DockPanel.Dock="Bottom" Content="Click to load LP" Margin="2" Click="Button_Click"/>
-            <DataGrid x:Name="DataGrid" Margin="5" CanUserAddRows="False" CanUserDeleteRows="False" ItemsSource="{Binding CharacterLoyalty}">
+            <DataGrid x:Name="DataGrid" Margin="5" AutoGenerateColumns="True" CanUserAddRows="True" CanUserDeleteRows="False" IsReadOnly="True" ClipboardCopyMode="IncludeHeader">
             </DataGrid>
         </DockPanel>
     </Grid>

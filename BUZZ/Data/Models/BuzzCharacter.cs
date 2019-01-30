@@ -69,7 +69,17 @@ namespace BUZZ.Data.Models
             return task.Result.Model;
         }
 
-        public List<LoyaltyPoints> GetLoyaltyPointsAsync()
+        public async Task<ESIModelDTO<List<LoyaltyPoints>>> GetLoyaltyPointsAsync()
+        {
+            return await EsiData.EsiClient.Loyalty.GetLoyaltyPointsV1Async(new AuthDTO()
+            {
+                AccessToken = AccessTokenDetails,
+                CharacterId = CharacterDetails.CharacterId,
+                Scopes = EVEStandard.Enumerations.Scopes.ESI_CHARACTERS_READ_LOYALTY_1
+            });
+        }
+
+        public List<LoyaltyPoints> GetLoyaltyPoints()
         {
             var task = Task.Run(() => EsiData.EsiClient.Loyalty.GetLoyaltyPointsV1Async(new AuthDTO()
             {
