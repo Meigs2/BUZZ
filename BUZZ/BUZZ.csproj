@@ -120,9 +120,16 @@
     <Compile Include="Core\LPManager\LpViewer.xaml.cs">
       <DependentUpon>LpViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Data\Models\AuthTokenDetails.cs" />
-    <Compile Include="Data\Models\BuzzCharacter.cs" />
-    <Compile Include="Data\Models\ViewModelBase.cs" />
+    <Compile Include="Core\Multiboxing\MultiboxingContainer.xaml.cs">
+      <DependentUpon>MultiboxingContainer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Models\AuthTokenDetails.cs" />
+    <Compile Include="Core\Models\BuzzCharacter.cs" />
+    <Compile Include="Core\Models\ViewModelBase.cs" />
+    <Compile Include="Core\Multiboxing\PullerView.xaml.cs">
+      <DependentUpon>PullerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Multiboxing\PullerViewModel.cs" />
     <Compile Include="Data\UserData\DataHandler.cs" />
     <Compile Include="Core\CharacterManagement\CharacterManagementWindow.xaml.cs">
       <DependentUpon>CharacterManagementWindow.xaml</DependentUpon>
@@ -132,6 +139,14 @@
     <Compile Include="Data\EsiScopes.cs" />
     <Compile Include="Utilities\Startup.cs" />
     <Page Include="Core\LPManager\LpViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Multiboxing\MultiboxingContainer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Multiboxing\PullerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

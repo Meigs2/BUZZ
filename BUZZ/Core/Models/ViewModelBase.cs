@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace BUZZ.Data.Models
+namespace BUZZ.Core.Models
 {
     /// <summary>
     /// This class implements the INotifyPropertyChanged interface, and should be used for ViewModels

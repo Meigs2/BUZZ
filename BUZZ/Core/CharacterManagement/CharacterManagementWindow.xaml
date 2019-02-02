@@ -3,9 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:model="clr-namespace:BUZZ.Core.Models"
         mc:Ignorable="d"
         Title="CharacterManagementWindow" Height="500" Width="450"
         Closing="CharacterManagementWindow_OnClosing">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="model:CharType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
@@ -33,6 +43,8 @@
                         <DataGridTextColumn Header="Name" Binding="{Binding CharacterName}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Character ID" Binding="{Binding CharacterDetails.CharacterId}" IsReadOnly="True"/>
                         <DataGridTextColumn Header ="Token Expiry Date" Binding="{Binding AccessTokenExpiry}" IsReadOnly="True"/>
+                        <DataGridComboBoxColumn Header="Character Type" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" 
+                                                SelectedItemBinding="{Binding Path=CharacterType}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BUZZ.Data.Models
+namespace BUZZ.Core.Models
 {
     [Serializable]
     class AuthTokenDetails

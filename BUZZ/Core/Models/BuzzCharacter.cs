@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using BUZZ.Data;
 using EVEStandard.Models;
 using EVEStandard.Models.API;
 using EVEStandard.Models.SSO;
 
-namespace BUZZ.Data.Models
+namespace BUZZ.Core.Models
 {
+
     public class BuzzCharacter
     {
         #region Properties
-        
+
         public bool IsEnabled { get; set; } = true;
         public AccessTokenDetails AccessTokenDetails { get; set; } = new AccessTokenDetails();
         public CharacterDetails CharacterDetails { get; set; } = new CharacterDetails();
+        public CharType CharacterType { get; set; } = CharType.Normal;
 
         public string CharacterName
         {
@@ -105,5 +106,13 @@ namespace BUZZ.Data.Models
         }
 
         #endregion
+    }
+
+    public enum CharType
+    {
+        Puller,
+        Runner,
+        Both,
+        Normal,
     }
 }

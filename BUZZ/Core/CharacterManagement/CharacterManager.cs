@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using BUZZ.Core.Models;
 using BUZZ.Core.Verification;
 using BUZZ.Data;
-using BUZZ.Data.Models;
 using Polenter.Serialization;
 using Exception = System.Exception;
 
@@ -97,8 +98,11 @@ namespace BUZZ.Core.CharacterManagement
             }
             catch (Exception e)
             {
+                if (e is System.IO.FileNotFoundException)
+                {
+                    File.Create("Characters.bin");
+                }
                 Console.WriteLine(e);
-                throw;
             }
         }
 

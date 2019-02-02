@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using BUZZ.Core.Models;
 using BUZZ.Core.Verification;
 using BUZZ.Data;
-using BUZZ.Data.Models;
 using EVEStandard.Enumerations;
 using EVEStandard.Models.API;
 

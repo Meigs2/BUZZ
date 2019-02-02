@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using BUZZ.Core.CharacterManagement;
+using BUZZ.Core.Models;
 using BUZZ.Data;
-using BUZZ.Data.Models;
 using EVEStandard;
 using EVEStandard.Models.SSO;
 
