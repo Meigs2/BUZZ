@@ -34,7 +34,6 @@ namespace BUZZ
             foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
             {
                 TestWrapPannel.Children.Add(new PullerView(buzzCharacter));
-                buzzCharacter.RefreshCharacterInformation();
             }
         }
 

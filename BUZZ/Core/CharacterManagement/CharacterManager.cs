@@ -58,8 +58,10 @@ namespace BUZZ.Core.CharacterManagement
         public async static void Initialize()
         {
             currentInstance = new CharacterManager();
+
             DeserializeCharacterData();
             await RefreshAccessTokensAsync();
+            RefreshCharacterInformation();
             SerializeCharacterData();
             SetUpRefreshTimers();
         }
@@ -98,10 +100,12 @@ namespace BUZZ.Core.CharacterManagement
         {
             try
             {
+                var taskList = new List<Task>();
                 foreach (var buzzCharacter in CurrentInstance.CharacterList)
                 {
-                    await buzzCharacter.RefreshCharacterInformation();
+                    taskList.Add(buzzCharacter.RefreshCharacterInformation());
                 }
+                await Task.WhenAll(taskList.ToArray());
             }
             catch (Exception e)
             {
@@ -114,10 +118,13 @@ namespace BUZZ.Core.CharacterManagement
         {
             try
             {
+                var taskList = new List<Task>();
                 foreach (var buzzCharacter in CharacterManager.currentInstance.CharacterList)
                 {
-                    await buzzCharacter.RefreshAuthToken();
+                    taskList.Add(buzzCharacter.RefreshAuthToken());
                 }
+
+                await Task.WhenAll(taskList.ToArray());
             }
             catch (Exception e)
             {
