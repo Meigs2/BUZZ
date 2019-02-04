@@ -19,11 +19,11 @@
                     </MenuItem>
                 </Menu>
                 <Menu HorizontalAlignment="Right">
-                    <MenuItem x:Name="AboutMenuitem" Header="About"/>
+                    <MenuItem x:Name="AboutMenuitem" Header="About" Click="AboutMenuitem_Click"/>
                 </Menu>
             </Grid>
             <Grid>
-
+                <WrapPanel x:Name="TestWrapPannel"></WrapPanel>
             </Grid>
         </DockPanel>
     </Grid>

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BUZZ.Core.Models;
 
 namespace BUZZ.Core.Multiboxing
 {
@@ -20,9 +21,13 @@ namespace BUZZ.Core.Multiboxing
     /// </summary>
     public partial class PullerView : UserControl
     {
-        public PullerView()
+        private PullerViewModel CurrentViewModel;
+
+        public PullerView(BuzzCharacter buzzCharacter)
         {
             InitializeComponent();
+            CurrentViewModel = new PullerViewModel(buzzCharacter);
+            this.DataContext = CurrentViewModel;
         }
     }
 }

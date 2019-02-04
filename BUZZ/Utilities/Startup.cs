@@ -12,6 +12,7 @@ namespace BUZZ.Utilities
         public static void PerformStartupActions()
         {
             CharacterManager.Initialize();
+            SolarSystems.LoadSolarSystems();
         }
     }
 }

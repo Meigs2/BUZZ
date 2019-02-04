@@ -49,11 +49,12 @@ namespace BUZZ.Core.CharacterManagement
 
         #region Public Methods
 
-        public static void Initialize()
+        public async static void Initialize()
         {
             currentInstance = new CharacterManager();
             DeserializeCharacterData();
-            RefreshAccessTokensAsync();
+            await RefreshAccessTokensAsync();
+            SerializeCharacterData();
             StartAutoRefresh();
         }
 
@@ -63,21 +64,21 @@ namespace BUZZ.Core.CharacterManagement
             CurrentInstance.RefreshTimer.IsEnabled = true;
         }
 
-        private static void RefreshTimer_Tick(object sender, EventArgs e)
+        private async static void RefreshTimer_Tick(object sender, EventArgs e)
         {
-            RefreshAccessTokensAsync();
+            await RefreshAccessTokensAsync();
+            SerializeCharacterData();
         }
 
-        private static async void RefreshAccessTokensAsync()
+        private static async Task RefreshAccessTokensAsync()
         {
             try
             {
-                var tasks = new List<Task>();
                 foreach (var buzzCharacter in CharacterManager.currentInstance.CharacterList)
                 {
-                    tasks.Add(buzzCharacter.RefreshAuthToken());
+                    await buzzCharacter.RefreshAuthToken();
+                    await buzzCharacter.UpdateCharacterInformation();
                 }
-                await Task.WhenAll(tasks);
             }
             catch (Exception e)
             {

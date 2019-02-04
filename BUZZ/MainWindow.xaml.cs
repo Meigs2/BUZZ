@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BUZZ.Core.CharacterManagement;
 using BUZZ.Core.LPManager;
+using BUZZ.Core.Multiboxing;
 using BUZZ.Properties;
 using EVEStandard;
 using EVEStandard.Enumerations;
@@ -42,6 +43,15 @@ namespace BUZZ
         {
             var lpViewer = new LpViewer();
             lpViewer.Show();
+        }
+
+        private async void AboutMenuitem_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
+            {
+                TestWrapPannel.Children.Add(new PullerView(buzzCharacter));
+                await buzzCharacter.UpdateCharacterInformation();
+            }
         }
     }
 }

@@ -44,7 +44,7 @@
                         <DataGridTextColumn Header="Character ID" Binding="{Binding CharacterDetails.CharacterId}" IsReadOnly="True"/>
                         <DataGridTextColumn Header ="Token Expiry Date" Binding="{Binding AccessTokenExpiry}" IsReadOnly="True"/>
                         <DataGridComboBoxColumn Header="Character Type" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" 
-                                                SelectedItemBinding="{Binding Path=CharacterType}"/>
+                                                SelectedItemBinding="{Binding Path=CharacterType}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

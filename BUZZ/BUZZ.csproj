@@ -120,6 +120,8 @@
     <Compile Include="Core\LPManager\LpViewer.xaml.cs">
       <DependentUpon>LpViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Models\Events\SystemChangedEventArgs.cs" />
+    <Compile Include="Core\Models\SolarSystemModel.cs" />
     <Compile Include="Core\Multiboxing\MultiboxingContainer.xaml.cs">
       <DependentUpon>MultiboxingContainer.xaml</DependentUpon>
     </Compile>
@@ -137,6 +139,7 @@
     <Compile Include="Core\Verification\VerificationWindow.xaml.cs" />
     <Compile Include="Data\EsiData.cs" />
     <Compile Include="Data\EsiScopes.cs" />
+    <Compile Include="Utilities\SolarSystems.cs" />
     <Compile Include="Utilities\Startup.cs" />
     <Page Include="Core\LPManager\LpViewer.xaml">
       <SubType>Designer</SubType>
@@ -189,7 +192,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Data\Static\Universe\mapSolarSystems.csv" />
+    <EmbeddedResource Include="Data\Static\Universe\mapSolarSystems.csv" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
