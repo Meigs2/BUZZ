@@ -95,7 +95,7 @@ namespace BUZZ.Core.Models
         /// <summary>
         /// Updates 
         /// </summary>
-        public async Task UpdateCharacterInformation()
+        public async Task RefreshCharacterInformation()
         {
             var result = await GetLocation();
             var solarSystemModel = new SolarSystemModel()
@@ -126,18 +126,6 @@ namespace BUZZ.Core.Models
                 CharacterId = CharacterDetails.CharacterId,
                 Scopes = EVEStandard.Enumerations.Scopes.ESI_CHARACTERS_READ_LOYALTY_1
             });
-        }
-
-        public List<LoyaltyPoints> GetLoyaltyPoints()
-        {
-            var task = Task.Run(() => EsiData.EsiClient.Loyalty.GetLoyaltyPointsV1Async(new AuthDTO()
-            {
-                AccessToken = AccessTokenDetails,
-                CharacterId = CharacterDetails.CharacterId,
-                Scopes = EVEStandard.Enumerations.Scopes.ESI_CHARACTERS_READ_LOYALTY_1
-            }));
-
-            return task.Result.Model;
         }
 
         public async Task RefreshAuthToken()

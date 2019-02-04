@@ -35,9 +35,15 @@ namespace BUZZ.Core.CharacterManagement
 
         public BindingList<BuzzCharacter> CharacterList { get; set; } = new BindingList<BuzzCharacter>();
 
-        public DispatcherTimer RefreshTimer = new DispatcherTimer()
+        public DispatcherTimer AuthRefreshTimer = new DispatcherTimer()
         {
             Interval = TimeSpan.FromMinutes(10),
+            IsEnabled = false
+        };
+
+        public DispatcherTimer CharacterInfoRefreshTimer = new DispatcherTimer()
+        {
+            Interval = TimeSpan.FromSeconds(5),
             IsEnabled = false
         };
 
@@ -55,19 +61,53 @@ namespace BUZZ.Core.CharacterManagement
             DeserializeCharacterData();
             await RefreshAccessTokensAsync();
             SerializeCharacterData();
-            StartAutoRefresh();
+            SetUpRefreshTimers();
         }
 
-        private static void StartAutoRefresh()
+        private static void SetUpRefreshTimers()
         {
-            CurrentInstance.RefreshTimer.Tick += RefreshTimer_Tick;
-            CurrentInstance.RefreshTimer.IsEnabled = true;
+            CurrentInstance.AuthRefreshTimer.Tick += AuthRefreshTimerTick;
+            CurrentInstance.CharacterInfoRefreshTimer.Tick += CharacterInfoRefreshTimer_Tick;
+            StartRefreshTimers();
         }
 
-        private async static void RefreshTimer_Tick(object sender, EventArgs e)
+        private static void StartRefreshTimers()
+        {
+            CurrentInstance.AuthRefreshTimer.IsEnabled = true;
+            CurrentInstance.CharacterInfoRefreshTimer.IsEnabled = true;
+        }
+
+        private static void StopRefreshTimers()
+        {
+            CurrentInstance.AuthRefreshTimer.IsEnabled = false;
+            CurrentInstance.CharacterInfoRefreshTimer.IsEnabled = false;
+        }
+
+        private static void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
+        {
+            RefreshCharacterInformation();
+        }
+
+        private async static void AuthRefreshTimerTick(object sender, EventArgs e)
         {
             await RefreshAccessTokensAsync();
             SerializeCharacterData();
+        }
+
+        private async static void RefreshCharacterInformation()
+        {
+            try
+            {
+                foreach (var buzzCharacter in CurrentInstance.CharacterList)
+                {
+                    await buzzCharacter.RefreshCharacterInformation();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private static async Task RefreshAccessTokensAsync()
@@ -77,7 +117,6 @@ namespace BUZZ.Core.CharacterManagement
                 foreach (var buzzCharacter in CharacterManager.currentInstance.CharacterList)
                 {
                     await buzzCharacter.RefreshAuthToken();
-                    await buzzCharacter.UpdateCharacterInformation();
                 }
             }
             catch (Exception e)

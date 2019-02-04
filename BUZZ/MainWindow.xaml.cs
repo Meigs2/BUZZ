@@ -31,6 +31,11 @@ namespace BUZZ
         {
             InitializeComponent();
             Utilities.Startup.PerformStartupActions();
+            foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
+            {
+                TestWrapPannel.Children.Add(new PullerView(buzzCharacter));
+                buzzCharacter.RefreshCharacterInformation();
+            }
         }
 
         private void MenuItem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -43,15 +48,6 @@ namespace BUZZ
         {
             var lpViewer = new LpViewer();
             lpViewer.Show();
-        }
-
-        private async void AboutMenuitem_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
-            {
-                TestWrapPannel.Children.Add(new PullerView(buzzCharacter));
-                await buzzCharacter.UpdateCharacterInformation();
-            }
         }
     }
 }
