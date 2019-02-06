@@ -55,20 +55,25 @@ namespace BUZZ.Core.CharacterManagement
 
         #region Public Methods
 
+        /// <summary>
+        /// Preforms startup actions for the Character side of things in BUZZ.
+        /// </summary>
         public async static void Initialize()
         {
             currentInstance = new CharacterManager();
 
             DeserializeCharacterData();
             await RefreshAccessTokensAsync();
-            RefreshCharacterInformation();
+            await RefreshCharacterInformation();
             SerializeCharacterData();
             SetUpRefreshTimers();
         }
 
+        #region Timer Methods
+
         private static void SetUpRefreshTimers()
         {
-            CurrentInstance.AuthRefreshTimer.Tick += AuthRefreshTimerTick;
+            CurrentInstance.AuthRefreshTimer.Tick += AuthRefreshTimer_Tick;
             CurrentInstance.CharacterInfoRefreshTimer.Tick += CharacterInfoRefreshTimer_Tick;
             StartRefreshTimers();
         }
@@ -85,18 +90,21 @@ namespace BUZZ.Core.CharacterManagement
             CurrentInstance.CharacterInfoRefreshTimer.IsEnabled = false;
         }
 
-        private static void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
+        #endregion
+
+
+        private async static void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
         {
-            RefreshCharacterInformation();
+            await RefreshCharacterInformation();
         }
 
-        private async static void AuthRefreshTimerTick(object sender, EventArgs e)
+        private async static void AuthRefreshTimer_Tick(object sender, EventArgs e)
         {
             await RefreshAccessTokensAsync();
             SerializeCharacterData();
         }
 
-        private async static void RefreshCharacterInformation()
+        private async static Task RefreshCharacterInformation()
         {
             try
             {
@@ -163,7 +171,6 @@ namespace BUZZ.Core.CharacterManagement
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }
 

@@ -19,6 +19,29 @@ namespace BUZZ.Core.Models
         public AccessTokenDetails AccessTokenDetails { get; set; } = new AccessTokenDetails();
         public CharacterDetails CharacterDetails { get; set; } = new CharacterDetails();
         public CharType CharacterType { get; set; } = CharType.Normal;
+        public int RowNumber { get; set; } = 0;
+        public int ColumnNumber { get; set; } = 0;
+        public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
+
+        private bool isOnline = false;
+        public bool IsOnline
+        {
+            get
+            {
+                return isOnline;
+            }
+            set
+            {
+                if (isOnline!=value)
+                {
+                    isOnline = value;
+                    OnOnlineStatusChanged(new OnlineStatusChangedEventArgs()
+                    {
+                        IsOnline = value
+                    });
+                }
+            }
+        }
 
         private SolarSystemModel currentSolarSystem;
         public SolarSystemModel CurrentSolarSystem {
@@ -77,6 +100,12 @@ namespace BUZZ.Core.Models
 
         #region Events
 
+        public event EventHandler<OnlineStatusChangedEventArgs> OnlineStatusChanged;
+        protected virtual void OnOnlineStatusChanged(OnlineStatusChangedEventArgs e)
+        {
+            OnlineStatusChanged?.Invoke(this, e);
+        }
+
         public event EventHandler<SystemChangedEventArgs> SystemChanged;
         protected virtual void OnSystemChanged(SystemChangedEventArgs e)
         {
@@ -97,18 +126,34 @@ namespace BUZZ.Core.Models
         /// </summary>
         public async Task RefreshCharacterInformation()
         {
-            var result = await GetLocation();
+            var locationResult = await GetLocationAsync();
             var solarSystemModel = new SolarSystemModel()
             {
-                SolarSystemId = result.Model.SolarSystemId,
-                StationId = result.Model.StationId.GetValueOrDefault(),
-                StructureId = result.Model.StationId.GetValueOrDefault(),
-                SystemName = Utilities.SolarSystems.GetSolarSystemName(result.Model.SolarSystemId)
+                SolarSystemId = locationResult.Model.SolarSystemId,
+                StationId = locationResult.Model.StationId.GetValueOrDefault(),
+                StructureId = locationResult.Model.StationId.GetValueOrDefault(),
+                SystemName = Utilities.SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
             };
             CurrentSolarSystem = solarSystemModel;
+
+            var onlineResult = await GetOnlineStatusAsync();
+            CharacterOnlineInfo = onlineResult.Model;
+            IsOnline = CharacterOnlineInfo.Online;
         }
 
-        public async Task<ESIModelDTO<CharacterLocation>> GetLocation()
+        #region ESI Methods
+
+        public async Task<ESIModelDTO<CharacterOnline>> GetOnlineStatusAsync()
+        {
+            return await EsiData.EsiClient.Location.GetCharacterOnlineV2Async(new AuthDTO()
+            {
+                AccessToken = AccessTokenDetails,
+                CharacterId = CharacterDetails.CharacterId,
+                Scopes = EVEStandard.Enumerations.Scopes.ESI_LOCATION_READ_ONLINE_1
+            });
+        }
+
+        public async Task<ESIModelDTO<CharacterLocation>> GetLocationAsync()
         {
             return await EsiData.EsiClient.Location.GetCharacterLocationV1Async(new AuthDTO()
             {
@@ -127,6 +172,10 @@ namespace BUZZ.Core.Models
                 Scopes = EVEStandard.Enumerations.Scopes.ESI_CHARACTERS_READ_LOYALTY_1
             });
         }
+
+        #endregion
+
+
 
         public async Task RefreshAuthToken()
         {

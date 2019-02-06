@@ -120,6 +120,7 @@
     <Compile Include="Core\LPManager\LpViewer.xaml.cs">
       <DependentUpon>LpViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Models\Events\OnlineStatusChangedEventArgs.cs" />
     <Compile Include="Core\Models\Events\SystemChangedEventArgs.cs" />
     <Compile Include="Core\Models\SolarSystemModel.cs" />
     <Compile Include="Core\Multiboxing\MultiboxingContainer.xaml.cs">

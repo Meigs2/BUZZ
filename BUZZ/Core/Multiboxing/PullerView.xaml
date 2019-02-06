@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BUZZ.Core.Multiboxing"
              mc:Ignorable="d"
-             d:DesignHeight="150" d:DesignWidth="250"> 
-    <Grid Height="150" Width="250">
-        <Grid Margin="5" Background="Green">
+             d:DesignHeight="150" d:DesignWidth="250">
+    <Grid MaxHeight="150" MaxWidth="250" Visibility="{Binding IsOnline, Converter={StaticResource BooleanToVisibility}}">
+        <Grid Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>

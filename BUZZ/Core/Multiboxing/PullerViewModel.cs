@@ -11,6 +11,17 @@ namespace BUZZ.Core.Multiboxing
     {
         public BuzzCharacter Character { get; set; }
 
+        private bool isOnline = false;
+        public bool IsOnline
+        {
+            get { return isOnline;}
+            set
+            {
+                isOnline = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string currentSolarSystem = string.Empty;
         public string CurrentSolarSystem {
             get { return currentSolarSystem; }
@@ -25,6 +36,21 @@ namespace BUZZ.Core.Multiboxing
         {
             Character = buzzCharacter;
             Character.SystemChanged += Character_SystemChanged;
+            Character.OnlineStatusChanged += Character_OnlineStatusChanged;
+
+            if (Properties.Settings.Default.AlwaysShowMultiboxingControls == true)
+                IsOnline = true;
+
+        }
+
+        private void Character_OnlineStatusChanged(object sender, Models.Events.OnlineStatusChangedEventArgs e)
+        {
+            if (Properties.Settings.Default.AlwaysShowMultiboxingControls == true)
+            {
+                IsOnline = true;
+                return;
+            }
+            IsOnline = e.IsOnline;
         }
 
         private void Character_SystemChanged(object sender, Models.Events.SystemChangedEventArgs e)
