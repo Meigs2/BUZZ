@@ -25,13 +25,37 @@ namespace BUZZ.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AlwaysShowMultiboxingControls {
             get {
                 return ((bool)(this["AlwaysShowMultiboxingControls"]));
             }
             set {
                 this["AlwaysShowMultiboxingControls"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int CharacterAuthRefreshRateMinutes {
+            get {
+                return ((int)(this["CharacterAuthRefreshRateMinutes"]));
+            }
+            set {
+                this["CharacterAuthRefreshRateMinutes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int CharacterInfoRefreshRateSeconds {
+            get {
+                return ((int)(this["CharacterInfoRefreshRateSeconds"]));
+            }
+            set {
+                this["CharacterInfoRefreshRateSeconds"] = value;
             }
         }
     }

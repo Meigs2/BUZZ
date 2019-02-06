@@ -48,5 +48,14 @@ namespace BUZZ
             var lpViewer = new LpViewer();
             lpViewer.Show();
         }
+
+        private void AboutMenuitem_Click(object sender, RoutedEventArgs e)
+        {
+            TestWrapPannel.Children.Clear();
+            foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
+            {
+                TestWrapPannel.Children.Add(new PullerView(buzzCharacter));
+            }
+        }
     }
 }

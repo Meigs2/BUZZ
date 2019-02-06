@@ -37,13 +37,13 @@ namespace BUZZ.Core.CharacterManagement
 
         public DispatcherTimer AuthRefreshTimer = new DispatcherTimer()
         {
-            Interval = TimeSpan.FromMinutes(10),
+            Interval = TimeSpan.FromMinutes(Properties.Settings.Default.CharacterAuthRefreshRateMinutes),
             IsEnabled = false
         };
 
         public DispatcherTimer CharacterInfoRefreshTimer = new DispatcherTimer()
         {
-            Interval = TimeSpan.FromSeconds(5),
+            Interval = TimeSpan.FromSeconds(Properties.Settings.Default.CharacterInfoRefreshRateSeconds),
             IsEnabled = false
         };
 

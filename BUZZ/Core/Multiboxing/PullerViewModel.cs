@@ -11,10 +11,23 @@ namespace BUZZ.Core.Multiboxing
     {
         public BuzzCharacter Character { get; set; }
 
+        // Acts as a override in case we dont want to show the UserControl, but still want to know if the character is
+        // online.
+        public bool IsVisible { get; set; }
+
+        // The visibility of the grid is bound to IsOnline, however IsVisible can override this.
+        // We could also have a IsHidden, however I dont believe this will be of much use, and can be added later.
         private bool isOnline = false;
         public bool IsOnline
         {
-            get { return isOnline;}
+            get
+            {
+                if (IsVisible == true)
+                {
+                    return true;
+                }
+                return isOnline;
+            }
             set
             {
                 isOnline = value;
@@ -47,7 +60,8 @@ namespace BUZZ.Core.Multiboxing
         {
             if (Properties.Settings.Default.AlwaysShowMultiboxingControls == true)
             {
-                IsOnline = true;
+                IsVisible = true;
+                IsOnline = e.IsOnline;
                 return;
             }
             IsOnline = e.IsOnline;
