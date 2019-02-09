@@ -9,10 +9,10 @@ namespace BUZZ.Utilities
 {
     public class Startup
     {
-        public static void PerformStartupActions()
+        public static async void PerformStartupActions()
         {
-            CharacterManager.Initialize();
             SolarSystems.LoadSolarSystems();
+            await CharacterManager.Initialize();
         }
     }
 }

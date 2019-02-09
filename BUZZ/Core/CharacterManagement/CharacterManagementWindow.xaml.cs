@@ -48,8 +48,9 @@ namespace BUZZ.Core.CharacterManagement
         }
 
 
-        private void CharacterManagementWindow_OnClosing(object sender, CancelEventArgs e)
+        private async void CharacterManagementWindow_OnClosing(object sender, CancelEventArgs e)
         {
+            await CharacterManager.RefreshCharacterInformation();
             CharacterManager.SerializeCharacterData();
         }
     }

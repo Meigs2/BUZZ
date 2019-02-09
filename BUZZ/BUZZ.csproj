@@ -155,8 +155,8 @@
     <Compile Include="Core\LPManager\LpViewer.xaml.cs">
       <DependentUpon>LpViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Models\Events\OnlineStatusChangedEventArgs.cs" />
-    <Compile Include="Core\Models\Events\SystemChangedEventArgs.cs" />
+    <Compile Include="Core\Models\Events\OnlineStatusUpdatedEventArgs.cs" />
+    <Compile Include="Core\Models\Events\SystemUpdatedEventArgs.cs" />
     <Compile Include="Core\Models\SolarSystemModel.cs" />
     <Compile Include="Core\Multiboxing\MultiboxingContainer.xaml.cs">
       <DependentUpon>MultiboxingContainer.xaml</DependentUpon>
@@ -175,6 +175,7 @@
     <Compile Include="Core\Verification\VerificationWindow.xaml.cs" />
     <Compile Include="Data\EsiData.cs" />
     <Compile Include="Data\EsiScopes.cs" />
+    <Compile Include="Utilities\Agents.cs" />
     <Compile Include="Utilities\SolarSystems.cs" />
     <Compile Include="Utilities\Startup.cs" />
     <Page Include="Core\LPManager\LpViewer.xaml">
@@ -229,7 +230,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Static\Universe\mapSolarSystems.csv" />
-    <None Include="BUZZ_TemporaryKey.pfx" />
+    <EmbeddedResource Include="Data\Static\Universe\agtAgents.csv" />
+    <EmbeddedResource Include="Data\Static\Universe\agtAgentTypes.csv" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

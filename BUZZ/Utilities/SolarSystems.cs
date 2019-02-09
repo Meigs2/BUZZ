@@ -3,10 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EVEStandard.Models.API;
-using Int64 = System.Int64;
 
 namespace BUZZ.Utilities
 {

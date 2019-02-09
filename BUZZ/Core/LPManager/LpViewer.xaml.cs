@@ -43,18 +43,17 @@ namespace BUZZ.Core.LPManager
 
         private async void LoadLoyaltyPoints()
         {
-            var CharacterLpList = new List<List<LoyaltyPoints>>();
+            var characterLpList = new List<List<LoyaltyPoints>>();
             foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
             {
                 var result = await buzzCharacter.GetLoyaltyPointsAsync();
-                CharacterLpList.Add(result.Model);
+                characterLpList.Add(result.Model);
             }
             // Get corporation names from ID's
             var corpIds = new List<int>();
-            var corpNames = new List<UniverseIdsToNames>();
-            foreach (var CharacterLp in CharacterLpList)
+            foreach (var characterLp in characterLpList)
             {
-                foreach (var loyaltyPoints in CharacterLp)
+                foreach (var loyaltyPoints in characterLp)
                 {
                     if (!corpIds.Contains(loyaltyPoints.CorporationId))
                     {
@@ -63,26 +62,25 @@ namespace BUZZ.Core.LPManager
                 }
             }
             var idResults = await EsiData.EsiClient.Universe.GetNamesAndCategoriesFromIdsV2Async(corpIds);
-            corpNames = idResults.Model;
+            var corpNames = idResults.Model;
 
 
-            string[,] lpData = new string[CharacterLpList.Count, corpIds.Count+1];
+            var lpData = new string[characterLpList.Count, corpIds.Count+1];
 
             // Populate our LoyaltyPoint data
-            for (int i = 0; i < CharacterManager.CurrentInstance.CharacterList.Count; i++)
+            for (var i = 0; i < CharacterManager.CurrentInstance.CharacterList.Count; i++)
             {
-                var currentLpCharacter = CharacterLpList[i];
+                var currentLpCharacter = characterLpList[i];
                 lpData[i, 0] = CharacterManager.CurrentInstance.CharacterList[i].CharacterName;
-                for (int j = 0; j < corpNames.Count; j++)
+                for (var j = 0; j < corpNames.Count; j++)
                 {
                     lpData[i, j + 1] = 0.ToString();
                     foreach (var loyaltyPoint in currentLpCharacter)
                     {
-                        if (corpNames[j].Id == loyaltyPoint.CorporationId)
-                        {
-                            lpData[i, j + 1 ] = loyaltyPoint.Points.ToString();
-                            break;
-                        }
+                        if (corpNames[j].Id != loyaltyPoint.CorporationId) continue;
+
+                        lpData[i, j + 1 ] = loyaltyPoint.Points.ToString();
+                        break;
                     }
                 }
             }
@@ -96,10 +94,10 @@ namespace BUZZ.Core.LPManager
             }
 
             // Populate DataTable
-            for (int i = 0; i < lpData.GetLength(0); i++)
+            for (var i = 0; i < lpData.GetLength(0); i++)
             {
                 var row = Table.NewRow();
-                for (int j = 0; j < lpData.GetLength(1); j++)
+                for (var j = 0; j < lpData.GetLength(1); j++)
                 {
                     row[j] = lpData[i, j];
                 }

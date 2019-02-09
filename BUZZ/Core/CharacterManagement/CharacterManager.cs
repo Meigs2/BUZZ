@@ -58,7 +58,7 @@ namespace BUZZ.Core.CharacterManagement
         /// <summary>
         /// Preforms startup actions for the Character side of things in BUZZ.
         /// </summary>
-        public async static void Initialize()
+        public static async Task Initialize()
         {
             currentInstance = new CharacterManager();
 
@@ -93,18 +93,25 @@ namespace BUZZ.Core.CharacterManagement
         #endregion
 
 
-        private async static void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
+        private static async void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
         {
-            await RefreshCharacterInformation();
+            try
+            {
+                await RefreshCharacterInformation();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
         }
 
-        private async static void AuthRefreshTimer_Tick(object sender, EventArgs e)
+        private static async void AuthRefreshTimer_Tick(object sender, EventArgs e)
         {
             await RefreshAccessTokensAsync();
             SerializeCharacterData();
         }
 
-        private async static Task RefreshCharacterInformation()
+        public static async Task RefreshCharacterInformation()
         {
             try
             {
@@ -147,9 +154,9 @@ namespace BUZZ.Core.CharacterManagement
         {
             try
             {
-                SharpSerializer searializer = new SharpSerializer();
+                SharpSerializer serializer = new SharpSerializer();
                 CurrentInstance.CharacterList =
-                    (BindingList<BuzzCharacter>)searializer.Deserialize(CharacterDataFilename);
+                    (BindingList<BuzzCharacter>)serializer.Deserialize(CharacterDataFilename);
             }
             catch (Exception e)
             {
@@ -165,8 +172,8 @@ namespace BUZZ.Core.CharacterManagement
         {
             try
             {
-                var searializer = new SharpSerializer();
-                searializer.Serialize(CurrentInstance.CharacterList, CharacterDataFilename);
+                var serializer = new SharpSerializer();
+                serializer.Serialize(CurrentInstance.CharacterList, CharacterDataFilename);
             }
             catch (Exception e)
             {

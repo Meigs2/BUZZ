@@ -32,18 +32,15 @@ namespace BUZZ.Core.Models
             }
             set
             {
-                if (isOnline!=value)
+                isOnline = value;
+                OnOnlineStatusUpdated(new OnlineStatusUpdatedEventArgs()
                 {
-                    isOnline = value;
-                    OnOnlineStatusChanged(new OnlineStatusChangedEventArgs()
-                    {
-                        IsOnline = value
-                    });
-                }
+                    IsOnline = value
+                });
             }
         }
 
-        private SolarSystemModel currentSolarSystem;
+        private SolarSystemModel currentSolarSystem = new SolarSystemModel();
         public SolarSystemModel CurrentSolarSystem {
             get
             {
@@ -55,14 +52,12 @@ namespace BUZZ.Core.Models
             }
             set
             {
-                if (currentSolarSystem != value)
+                OnSystemInformationUpdated(new SystemUpdatedEventArgs()
                 {
-                    currentSolarSystem = value;
-                    OnSystemChanged(new SystemChangedEventArgs()
-                    {
-                        NewSystemName = value.SystemName, NewSystemId = value.SolarSystemId
-                    });
-                }
+                    NewSystemName = value.SystemName, NewSystemId = value.SolarSystemId,
+                    OldSystemId = currentSolarSystem.SolarSystemId, OldSystemName = currentSolarSystem.SystemName
+                });
+                currentSolarSystem = value;
             }
         }
 
@@ -100,16 +95,16 @@ namespace BUZZ.Core.Models
 
         #region Events
 
-        public event EventHandler<OnlineStatusChangedEventArgs> OnlineStatusChanged;
-        protected virtual void OnOnlineStatusChanged(OnlineStatusChangedEventArgs e)
+        public event EventHandler<OnlineStatusUpdatedEventArgs> OnlineStatusChanged;
+        protected virtual void OnOnlineStatusUpdated(OnlineStatusUpdatedEventArgs e)
         {
             OnlineStatusChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<SystemChangedEventArgs> SystemChanged;
-        protected virtual void OnSystemChanged(SystemChangedEventArgs e)
+        public event EventHandler<SystemUpdatedEventArgs> SystemInformationUpdated;
+        protected virtual void OnSystemInformationUpdated(SystemUpdatedEventArgs e)
         {
-            SystemChanged?.Invoke(this, e);
+            SystemInformationUpdated?.Invoke(this, e);
         }
 
         #endregion
@@ -174,7 +169,6 @@ namespace BUZZ.Core.Models
         }
 
         #endregion
-
 
 
         public async Task RefreshAuthToken()

@@ -7,7 +7,7 @@
         Title="Loyalty Point Viewer" Height="450" Width="800">
     <Grid>
         <DockPanel>
-            <Button DockPanel.Dock="Bottom" Content="Click to load LP" Margin="2" Click="Button_Click"/>
+            <Button DockPanel.Dock="Bottom" Content="Click to load LP" Margin="2" Click="Button_Click" x:Name="Button"/>
             <DataGrid x:Name="DataGrid" Margin="5" AutoGenerateColumns="True" CanUserAddRows="True" CanUserDeleteRows="False" IsReadOnly="True" ClipboardCopyMode="IncludeHeader">
             </DataGrid>
         </DockPanel>

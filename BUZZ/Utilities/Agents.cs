@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BUZZ.Core.Models.Events
+namespace BUZZ.Utilities
 {
-    public class OnlineStatusChangedEventArgs
+    public class Agents
     {
-        public bool IsOnline { get; set; }
+        public static void LoadAgentInformation()
+        {
+
+        }
     }
 }

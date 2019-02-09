@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using BUZZ.Core.Models;
+using Color = System.Drawing.Color;
 
 namespace BUZZ.Core.Multiboxing
 {
@@ -22,7 +26,7 @@ namespace BUZZ.Core.Multiboxing
         {
             get
             {
-                if (IsVisible == true)
+                if (IsVisible)
                 {
                     return true;
                 }
@@ -36,8 +40,9 @@ namespace BUZZ.Core.Multiboxing
         }
 
         private string currentSolarSystem = string.Empty;
-        public string CurrentSolarSystem {
-            get { return currentSolarSystem; }
+        public string CurrentSolarSystem
+        {
+            get => currentSolarSystem;
             set
             {
                 currentSolarSystem = value;
@@ -48,7 +53,7 @@ namespace BUZZ.Core.Multiboxing
         public PullerViewModel(BuzzCharacter buzzCharacter)
         {
             Character = buzzCharacter;
-            Character.SystemChanged += Character_SystemChanged;
+            Character.SystemInformationUpdated += CharacterSystemInformationUpdated;
             Character.OnlineStatusChanged += Character_OnlineStatusChanged;
 
             if (Properties.Settings.Default.AlwaysShowMultiboxingControls == true)
@@ -56,7 +61,7 @@ namespace BUZZ.Core.Multiboxing
 
         }
 
-        private void Character_OnlineStatusChanged(object sender, Models.Events.OnlineStatusChangedEventArgs e)
+        private void Character_OnlineStatusChanged(object sender, Models.Events.OnlineStatusUpdatedEventArgs e)
         {
             if (Properties.Settings.Default.AlwaysShowMultiboxingControls == true)
             {
@@ -67,9 +72,13 @@ namespace BUZZ.Core.Multiboxing
             IsOnline = e.IsOnline;
         }
 
-        private void Character_SystemChanged(object sender, Models.Events.SystemChangedEventArgs e)
+        private void CharacterSystemInformationUpdated(object sender, Models.Events.SystemUpdatedEventArgs e)
         {
             CurrentSolarSystem = e.NewSystemName;
         }
+
+        #region Events
+
+        #endregion
     }
 }
