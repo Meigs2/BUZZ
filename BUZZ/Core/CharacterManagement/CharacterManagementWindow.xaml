@@ -6,7 +6,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:model="clr-namespace:BUZZ.Core.Models"
         mc:Ignorable="d"
-        Title="CharacterManagementWindow" Height="500" Width="450"
+        Title="CharacterManagementWindow" Height="500" Width="786"
         Closing="CharacterManagementWindow_OnClosing">
     <Window.Resources>
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
@@ -45,6 +45,8 @@
                         <DataGridTextColumn Header ="Token Expiry Date" Binding="{Binding AccessTokenExpiry}" IsReadOnly="True"/>
                         <DataGridComboBoxColumn Header="Character Type" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" 
                                                 SelectedItemBinding="{Binding Path=CharacterType}" />
+                        <DataGridTextColumn Header="Grid Column" Binding="{Binding ColumnNumber}"/>
+                        <DataGridTextColumn Header="Grid Row" Binding="{Binding RowNumber}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

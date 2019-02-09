@@ -19,8 +19,9 @@ namespace BUZZ.Core.Models
         public AccessTokenDetails AccessTokenDetails { get; set; } = new AccessTokenDetails();
         public CharacterDetails CharacterDetails { get; set; } = new CharacterDetails();
         public CharType CharacterType { get; set; } = CharType.Normal;
-        public int RowNumber { get; set; } = 0;
-        public int ColumnNumber { get; set; } = 0;
+        public int RowNumber { get; set; } = 1;
+        public int ColumnNumber { get; set; } = 1;
+        public int AccountNumber { get; set; } = 1;
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
 
         private bool isOnline = false;

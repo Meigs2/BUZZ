@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BUZZ"
         mc:Ignorable="d"
-        Title="BUZZ" Height="500" Width="300">
+        Title="BUZZ" Height="500" Width="500">
     <Grid>
         <DockPanel>
             <Grid Margin="5" DockPanel.Dock="Top">
@@ -19,11 +19,10 @@
                     </MenuItem>
                 </Menu>
                 <Menu HorizontalAlignment="Right">
-                    <MenuItem x:Name="AboutMenuitem" Header="About" Click="AboutMenuitem_Click"/>
+                    <MenuItem x:Name="LoadMenuButton" Header="Load Controls" Click="LoadMenuItem_Click"/>
                 </Menu>
             </Grid>
-            <Grid>
-                <WrapPanel x:Name="TestWrapPannel"></WrapPanel>
+                <Grid x:Name="MainGrid">
             </Grid>
         </DockPanel>
     </Grid>

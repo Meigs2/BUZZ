@@ -158,8 +158,8 @@
     <Compile Include="Core\Models\Events\OnlineStatusUpdatedEventArgs.cs" />
     <Compile Include="Core\Models\Events\SystemUpdatedEventArgs.cs" />
     <Compile Include="Core\Models\SolarSystemModel.cs" />
-    <Compile Include="Core\Multiboxing\MultiboxingContainer.xaml.cs">
-      <DependentUpon>MultiboxingContainer.xaml</DependentUpon>
+    <Compile Include="Core\Multiboxing\PullerContainer.xaml.cs">
+      <DependentUpon>PullerContainer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Models\AuthTokenDetails.cs" />
     <Compile Include="Core\Models\BuzzCharacter.cs" />
@@ -182,7 +182,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Multiboxing\MultiboxingContainer.xaml">
+    <Page Include="Core\Multiboxing\PullerContainer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

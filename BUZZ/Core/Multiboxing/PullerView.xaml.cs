@@ -12,7 +12,7 @@ namespace BUZZ.Core.Multiboxing
     /// </summary>
     public partial class PullerView : UserControl
     {
-        private readonly PullerViewModel CurrentViewModel;
+        public readonly PullerViewModel CurrentViewModel;
 
         public PullerView(BuzzCharacter buzzCharacter)
         {

@@ -58,5 +58,29 @@ namespace BUZZ.Properties {
                 this["CharacterInfoRefreshRateSeconds"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public int PullerCellWidth {
+            get {
+                return ((int)(this["PullerCellWidth"]));
+            }
+            set {
+                this["PullerCellWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("150")]
+        public int PullerCellHeight {
+            get {
+                return ((int)(this["PullerCellHeight"]));
+            }
+            set {
+                this["PullerCellHeight"] = value;
+            }
+        }
     }
 }

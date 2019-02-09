@@ -31,10 +31,6 @@ namespace BUZZ
         {
             InitializeComponent();
             Utilities.Startup.PerformStartupActions();
-            foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
-            {
-                TestWrapPannel.Children.Add(new PullerView(buzzCharacter));
-            }
         }
 
         private void MenuItem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -49,13 +45,19 @@ namespace BUZZ
             lpViewer.Show();
         }
 
-        private void AboutMenuitem_Click(object sender, RoutedEventArgs e)
+        private void LoadMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            TestWrapPannel.Children.Clear();
+            MainGrid.Children.Clear();
+            var pullerList = new List<PullerView>();
+
             foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
             {
-                TestWrapPannel.Children.Add(new PullerView(buzzCharacter));
+                pullerList.Add(new PullerView(buzzCharacter));
             }
+
+            var pullerGrid = new PullerContainer();
+            MainGrid.Children.Add(pullerGrid);
+            pullerGrid.LoadUserControlsToGrid(pullerList);
         }
     }
 }
