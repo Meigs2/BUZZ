@@ -23,6 +23,7 @@ namespace BUZZ.Core.Models
         public int ColumnNumber { get; set; } = 1;
         public int AccountNumber { get; set; } = 1;
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
+        public string CharacterWindowOverride { get; set; } = string.Empty;
 
         private bool isOnline = false;
         public bool IsOnline
@@ -122,51 +123,82 @@ namespace BUZZ.Core.Models
         /// </summary>
         public async Task RefreshCharacterInformation()
         {
-            var locationResult = await GetLocationAsync();
-            var solarSystemModel = new SolarSystemModel()
+            try
             {
-                SolarSystemId = locationResult.Model.SolarSystemId,
-                StationId = locationResult.Model.StationId.GetValueOrDefault(),
-                StructureId = locationResult.Model.StationId.GetValueOrDefault(),
-                SystemName = Utilities.SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
-            };
-            CurrentSolarSystem = solarSystemModel;
+                var locationResult = await GetLocationAsync();
+                var solarSystemModel = new SolarSystemModel()
+                {
+                    SolarSystemId = locationResult.Model.SolarSystemId,
+                    StationId = locationResult.Model.StationId.GetValueOrDefault(),
+                    StructureId = locationResult.Model.StationId.GetValueOrDefault(),
+                    SystemName = Utilities.SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
+                };
+                CurrentSolarSystem = solarSystemModel;
 
-            var onlineResult = await GetOnlineStatusAsync();
-            CharacterOnlineInfo = onlineResult.Model;
-            IsOnline = CharacterOnlineInfo.Online;
+                var onlineResult = await GetOnlineStatusAsync();
+                CharacterOnlineInfo = onlineResult.Model;
+                IsOnline = CharacterOnlineInfo.Online;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         #region ESI Methods
 
         public async Task<ESIModelDTO<CharacterOnline>> GetOnlineStatusAsync()
         {
-            return await EsiData.EsiClient.Location.GetCharacterOnlineV2Async(new AuthDTO()
+            try
             {
-                AccessToken = AccessTokenDetails,
-                CharacterId = CharacterDetails.CharacterId,
-                Scopes = EVEStandard.Enumerations.Scopes.ESI_LOCATION_READ_ONLINE_1
-            });
+                return await EsiData.EsiClient.Location.GetCharacterOnlineV2Async(new AuthDTO()
+                {
+                    AccessToken = AccessTokenDetails,
+                    CharacterId = CharacterDetails.CharacterId,
+                    Scopes = EVEStandard.Enumerations.Scopes.ESI_LOCATION_READ_ONLINE_1
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new ESIModelDTO<CharacterOnline>();
+            }
         }
 
         public async Task<ESIModelDTO<CharacterLocation>> GetLocationAsync()
         {
-            return await EsiData.EsiClient.Location.GetCharacterLocationV1Async(new AuthDTO()
+            try
             {
-                AccessToken = AccessTokenDetails,
-                CharacterId = CharacterDetails.CharacterId,
-                Scopes = EVEStandard.Enumerations.Scopes.ESI_LOCATION_READ_LOCATION_1
-            });
+                return await EsiData.EsiClient.Location.GetCharacterLocationV1Async(new AuthDTO()
+                {
+                    AccessToken = AccessTokenDetails,
+                    CharacterId = CharacterDetails.CharacterId,
+                    Scopes = EVEStandard.Enumerations.Scopes.ESI_LOCATION_READ_LOCATION_1
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new ESIModelDTO<CharacterLocation>();
+            }
         }
 
         public async Task<ESIModelDTO<List<LoyaltyPoints>>> GetLoyaltyPointsAsync()
         {
-            return await EsiData.EsiClient.Loyalty.GetLoyaltyPointsV1Async(new AuthDTO()
+            try
             {
-                AccessToken = AccessTokenDetails,
-                CharacterId = CharacterDetails.CharacterId,
-                Scopes = EVEStandard.Enumerations.Scopes.ESI_CHARACTERS_READ_LOYALTY_1
-            });
+                return await EsiData.EsiClient.Loyalty.GetLoyaltyPointsV1Async(new AuthDTO()
+                {
+                    AccessToken = AccessTokenDetails,
+                    CharacterId = CharacterDetails.CharacterId,
+                    Scopes = EVEStandard.Enumerations.Scopes.ESI_CHARACTERS_READ_LOYALTY_1
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new ESIModelDTO<List<LoyaltyPoints>>();
+            }
         }
 
         #endregion
@@ -181,7 +213,6 @@ namespace BUZZ.Core.Models
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }
 

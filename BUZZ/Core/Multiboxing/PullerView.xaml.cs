@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using BUZZ.Core.Models;
@@ -29,6 +30,11 @@ namespace BUZZ.Core.Multiboxing
             ColorAnimation colorAnimation = new ColorAnimation(Colors.Transparent, new Duration(TimeSpan.FromSeconds(30)));
             ViewGrid.Background = new SolidColorBrush(Colors.LightGreen);
             ViewGrid.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+        }
+
+        private void CharacterLocationLabel_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            CurrentViewModel.MakePullerActiveWindow();
         }
     }
 }

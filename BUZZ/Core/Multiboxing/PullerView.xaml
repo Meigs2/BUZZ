@@ -23,7 +23,7 @@
                 </Grid>
                 <Grid Grid.Row="1">
                     <Viewbox>
-                        <Label x:Name="CharacterLocationLabel" Content="{Binding CurrentSolarSystem}" HorizontalAlignment="Center"></Label>
+                        <Label x:Name="CharacterLocationLabel" Content="{Binding CurrentSolarSystem}" HorizontalAlignment="Center" PreviewMouseDown="CharacterLocationLabel_OnPreviewMouseDown"></Label>
                     </Viewbox>
                 </Grid>
             </Grid>
