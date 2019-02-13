@@ -32,7 +32,7 @@ namespace BUZZ.Core.Multiboxing
             ViewGrid.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
-        private void CharacterLocationLabel_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void BringCharacterToForeground(object sender, MouseButtonEventArgs e)
         {
             CurrentViewModel.MakePullerActiveWindow();
         }
