@@ -178,6 +178,7 @@
     <Compile Include="Utilities\Agents.cs" />
     <Compile Include="Utilities\SolarSystems.cs" />
     <Compile Include="Utilities\Startup.cs" />
+    <Compile Include="Utilities\WindowHelper.cs" />
     <Page Include="Core\LPManager\LpViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
