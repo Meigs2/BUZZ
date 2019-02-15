@@ -23,7 +23,6 @@ namespace BUZZ.Core.Models
         public int ColumnNumber { get; set; } = 1;
         public int AccountNumber { get; set; } = 1;
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
-        public string CharacterWindowOverride { get; set; } = string.Empty;
 
         private bool isOnline = false;
         public bool IsOnline
