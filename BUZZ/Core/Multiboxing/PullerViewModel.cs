@@ -101,10 +101,6 @@ namespace BUZZ.Core.Multiboxing
             {
                 if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
 
-                if (Character.CharacterWindowOverride != string.Empty && process.MainWindowTitle.Contains(Character.CharacterWindowOverride))
-                {
-                    return process;
-                }
                 if (process.MainWindowTitle.Contains(Character.CharacterDetails.CharacterName))
                 {
                     return process;
