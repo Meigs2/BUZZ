@@ -27,14 +27,20 @@ namespace BUZZ.Core.Multiboxing
         {
             if (e.OldSystemName == e.NewSystemName) return;
 
-            ColorAnimation colorAnimation = new ColorAnimation(Colors.Transparent, new Duration(TimeSpan.FromSeconds(30)));
-            ViewGrid.Background = new SolidColorBrush(Colors.LightGreen);
-            ViewGrid.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            AnimateBackground(BackgroundGrid, Colors.LightGreen,Colors.Transparent, TimeSpan.FromSeconds(30),.5);
         }
 
         private void BringCharacterToForeground(object sender, MouseButtonEventArgs e)
         {
             CurrentViewModel.MakePullerActiveWindow();
+        }
+
+        public void AnimateBackground(Panel targetPanel, Color fromColor, Color toColor, TimeSpan duration, double startingOpacity)
+        {
+            ColorAnimation colorAnimation = new ColorAnimation(toColor, duration);
+            targetPanel.Opacity = startingOpacity;
+            targetPanel.Background = new SolidColorBrush(fromColor);
+            targetPanel.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
     }
 }

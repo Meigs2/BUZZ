@@ -73,7 +73,6 @@ namespace BUZZ.Core.Multiboxing
             {
                 MultiboxingGrid.RowDefinitions.Add(new RowDefinition());
             }
-            
 
             // Assign usercontrols to grids
             foreach (var pullerView in userControls)

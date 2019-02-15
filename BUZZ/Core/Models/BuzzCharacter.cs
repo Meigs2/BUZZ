@@ -28,10 +28,7 @@ namespace BUZZ.Core.Models
         private bool isOnline = false;
         public bool IsOnline
         {
-            get
-            {
-                return isOnline;
-            }
+            get => isOnline;
             set
             {
                 isOnline = value;
@@ -67,14 +64,12 @@ namespace BUZZ.Core.Models
         {
             get
             {
-                if (CharacterDetails != null)
-                {
-                    return CharacterDetails.CharacterName;
-                }
-                else
+                if (CharacterDetails == null)
                 {
                     return string.Empty;
                 }
+
+                return CharacterDetails.CharacterName;
             }
         }
 

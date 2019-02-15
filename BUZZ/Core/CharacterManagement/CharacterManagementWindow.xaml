@@ -12,7 +12,7 @@
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
                             ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="model:CharType"/>
+                <x:Type TypeName="model:CharType" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>
@@ -20,14 +20,14 @@
         <DockPanel>
             <Grid DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button x:Name="AddCharacterButton" Content="Add Character" VerticalAlignment="Bottom" Margin="5" Grid.Column="0" Click="AddCharacterButton_Click"/>
-                <Button x:Name="RemoveCharacterButton" Content="Remove Characters" VerticalAlignment="Bottom" Margin="5" Grid.Column="1" Click="RemoveCharacterButton_Click"/>
+                <Button x:Name="AddCharacterButton" Content="Add Character" VerticalAlignment="Bottom" Margin="5" Grid.Column="0" Click="AddCharacterButton_Click" />
+                <Button x:Name="RemoveCharacterButton" Content="Remove Characters" VerticalAlignment="Bottom" Margin="5" Grid.Column="1" Click="RemoveCharacterButton_Click" />
             </Grid>
             <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Center" TextAlignment="Center">
-                To delete a character, select character(s) with your mouse <LineBreak/>
+                To delete a character, select character(s) with your mouse <LineBreak />
                 and press "Remove Characters"
             </TextBlock>
             <Grid>
@@ -36,18 +36,18 @@
                         <DataGridTemplateColumn Header="Active">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <CheckBox IsChecked="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Name" Binding="{Binding CharacterName}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Character ID" Binding="{Binding CharacterDetails.CharacterId}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header ="Token Expiry Date" Binding="{Binding AccessTokenExpiry}" IsReadOnly="True"/>
-                        <DataGridComboBoxColumn Header="Character Type" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" 
+                        <DataGridTextColumn Header="Name" Binding="{Binding CharacterName}" IsReadOnly="True" />
+                        <DataGridTextColumn Header="Character ID" Binding="{Binding CharacterDetails.CharacterId}" IsReadOnly="True" />
+                        <DataGridTextColumn Header ="Token Expiry Date" Binding="{Binding AccessTokenExpiry}" IsReadOnly="True" />
+                        <DataGridComboBoxColumn Header="Character Type" ItemsSource="{Binding Source={StaticResource dataFromEnum}}"
                                                 SelectedItemBinding="{Binding Path=CharacterType}" />
-                        <DataGridTextColumn Header="Grid Column" Binding="{Binding ColumnNumber}"/>
-                        <DataGridTextColumn Header="Grid Row" Binding="{Binding RowNumber}"/>
-                        <DataGridTextColumn Header="Active Window Override" Binding="{Binding CharacterWindowOverride}"/>
+                        <DataGridTextColumn Header="Grid Column" Binding="{Binding ColumnNumber}" />
+                        <DataGridTextColumn Header="Grid Row" Binding="{Binding RowNumber}" />
+                        <DataGridTextColumn Header="Active Window Override" Binding="{Binding CharacterWindowOverride}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

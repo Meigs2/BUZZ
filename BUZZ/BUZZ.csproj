@@ -158,6 +158,9 @@
     <Compile Include="Core\Models\Events\OnlineStatusUpdatedEventArgs.cs" />
     <Compile Include="Core\Models\Events\SystemUpdatedEventArgs.cs" />
     <Compile Include="Core\Models\SolarSystemModel.cs" />
+    <Compile Include="Core\Multiboxing\CellContainer.xaml.cs">
+      <DependentUpon>CellContainer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Multiboxing\PullerContainer.xaml.cs">
       <DependentUpon>PullerContainer.xaml</DependentUpon>
     </Compile>
@@ -180,6 +183,10 @@
     <Compile Include="Utilities\Startup.cs" />
     <Compile Include="Utilities\WindowHelper.cs" />
     <Page Include="Core\LPManager\LpViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Multiboxing\CellContainer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

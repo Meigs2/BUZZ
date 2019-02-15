@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using BUZZ.Core.Models;
+using BUZZ.Core.Verification;
+using BUZZ.Data;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using BUZZ.Core.Models;
-using BUZZ.Core.Verification;
-using BUZZ.Data;
-using EVEStandard.Enumerations;
-using EVEStandard.Models.API;
 
 namespace BUZZ.Core.CharacterManagement
 {
@@ -46,7 +44,6 @@ namespace BUZZ.Core.CharacterManagement
             DataGrid.ItemsSource = null;
             DataGrid.ItemsSource = CharacterManager.CurrentInstance.CharacterList;
         }
-
 
         private async void CharacterManagementWindow_OnClosing(object sender, CancelEventArgs e)
         {

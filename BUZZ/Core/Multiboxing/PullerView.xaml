@@ -6,6 +6,9 @@
              mc:Ignorable="d"
              d:DesignHeight="150" d:DesignWidth="250">
     <Grid x:Name="ViewGrid" Margin="5" Visibility="{Binding IsOnline, Converter={StaticResource BooleanToVisibility}}">
+        <Grid x:Name="BackgroundGrid" Margin="5">
+
+        </Grid>
         <Border BorderBrush="Gray" BorderThickness="1" Margin="5">
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
