@@ -1,0 +1,32 @@
+﻿<Window x:Class="BUZZ.Core.Settings.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:BUZZ.Properties"
+        mc:Ignorable="d"
+        Title="Settings" Height="375" Width="500">
+
+    <Grid>
+        <GroupBox Header="General Settings" Margin="5">
+            <StackPanel>
+                <CheckBox Content="Display all characters regardless of online status." IsChecked="{Binding Source={x:Static properties:Settings.Default }, 
+                        Path=AlwaysShowMultiboxingControls}" Margin="5"/>
+                <Grid Margin="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox MaxWidth="50" MinWidth="50" HorizontalAlignment="Left" TextAlignment="Center" FontSize="18"
+                                 Text="{Binding Source={x:Static properties:Settings.Default}, Path=CharacterAuthRefreshRateMinutes}"/>
+                        <Label Content="Character Authorization Token refresh rate (in minutes)"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox MaxWidth="50" MinWidth="50" HorizontalAlignment="Left" TextAlignment="Center" FontSize="18"
+                                 Text="{Binding Source={x:Static properties:Settings.Default}, Path=CharacterInfoRefreshRateSeconds}"/>
+                        <Label Content="Character Information refresh rate (in seconds)"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </GroupBox>  
+    </Grid>
+</Window>

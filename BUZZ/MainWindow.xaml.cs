@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using BUZZ.Core.CharacterManagement;
 using BUZZ.Core.LPManager;
 using BUZZ.Core.Multiboxing;
+using BUZZ.Core.Settings;
 using BUZZ.Properties;
 using EVEStandard;
 using EVEStandard.Enumerations;
@@ -58,6 +59,12 @@ namespace BUZZ
             var pullerGrid = new PullerContainer();
             MainGrid.Children.Add(pullerGrid);
             pullerGrid.LoadUserControlsToGrid(pullerList);
+        }
+
+        private void SettingsMenuItem_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var settingsWindow = new SettingsWindow();
+            settingsWindow.ShowDialog();
         }
     }
 }

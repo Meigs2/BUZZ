@@ -27,7 +27,7 @@ namespace BUZZ.Core.Multiboxing
         {
             if (e.OldSystemName == e.NewSystemName) return;
 
-            AnimateBackground(BackgroundGrid, Colors.LightGreen,Colors.Transparent, TimeSpan.FromSeconds(30),.5);
+            AnimateBackground(BackgroundGrid, Colors.ForestGreen,Colors.Transparent, TimeSpan.FromSeconds(30),.75);
         }
 
         private void BringCharacterToForeground(object sender, MouseButtonEventArgs e)

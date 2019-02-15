@@ -171,6 +171,9 @@
       <DependentUpon>PullerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Multiboxing\PullerViewModel.cs" />
+    <Compile Include="Core\Settings\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Data\UserData\DataHandler.cs" />
     <Compile Include="Core\CharacterManagement\CharacterManagementWindow.xaml.cs">
       <DependentUpon>CharacterManagementWindow.xaml</DependentUpon>
@@ -195,6 +198,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Multiboxing\PullerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Settings\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
