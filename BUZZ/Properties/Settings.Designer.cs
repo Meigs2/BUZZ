@@ -82,5 +82,17 @@ namespace BUZZ.Properties {
                 this["PullerCellHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseThumbnailPreviews {
+            get {
+                return ((bool)(this["UseThumbnailPreviews"]));
+            }
+            set {
+                this["UseThumbnailPreviews"] = value;
+            }
+        }
     }
 }

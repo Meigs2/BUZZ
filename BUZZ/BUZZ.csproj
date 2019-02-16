@@ -41,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -174,6 +175,7 @@
     <Compile Include="Core\Settings\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Thumbnails\DwmClass.cs" />
     <Compile Include="Data\UserData\DataHandler.cs" />
     <Compile Include="Core\CharacterManagement\CharacterManagementWindow.xaml.cs">
       <DependentUpon>CharacterManagementWindow.xaml</DependentUpon>

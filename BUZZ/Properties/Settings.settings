@@ -17,5 +17,8 @@
     <Setting Name="PullerCellHeight" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">150</Value>
     </Setting>
+    <Setting Name="UseThumbnailPreviews" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

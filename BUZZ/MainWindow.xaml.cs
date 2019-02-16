@@ -48,12 +48,17 @@ namespace BUZZ
 
         private void LoadMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            foreach (var mainGridChild in MainGrid.Children.OfType<PullerView>())
+            {
+                mainGridChild.CurrentViewModel.UnregesterCurrentThumbnail();
+            }
+
             MainGrid.Children.Clear();
             var pullerList = new List<PullerView>();
 
             foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
             {
-                pullerList.Add(new PullerView(buzzCharacter));
+                pullerList.Add(new PullerView(buzzCharacter,this));
             }
 
             var pullerGrid = new PullerContainer();
