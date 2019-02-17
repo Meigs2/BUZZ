@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BUZZ"
         mc:Ignorable="d"
-        Title="BUZZ" Height="500" Width="500">
+        Title="BUZZ" Height="500" Width="750">
     <Grid>
         <DockPanel>
             <Grid Margin="5" DockPanel.Dock="Top">

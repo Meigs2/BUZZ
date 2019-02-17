@@ -26,6 +26,15 @@
                         <Label Content="Character Information refresh rate (in seconds)"/>
                     </StackPanel>
                 </Grid>
+                <CheckBox Content="Overlay client thumbnail previews?" IsChecked="{Binding Source={x:Static properties:Settings.Default }, 
+                        Path=UseThumbnailPreviews}" Margin="5"/>
+                <Grid Margin="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox MaxWidth="50" MinWidth="50" HorizontalAlignment="Left" TextAlignment="Center" FontSize="18"
+                                 Text="{Binding Source={x:Static properties:Settings.Default}, Path=ThumbnailOpacity}"/>
+                        <Label Content="Client Thumbnail Preview Opacity"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </GroupBox>  
     </Grid>

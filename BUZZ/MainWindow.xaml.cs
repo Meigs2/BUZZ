@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,6 +33,42 @@ namespace BUZZ
         {
             InitializeComponent();
             Utilities.Startup.PerformStartupActions();
+            this.Closing += MainWindow_Closing;
+
+            SetupWindowPosition();
+        }
+
+        private void SetupWindowPosition()
+        {
+            if ((Settings.Default.MainWindowTop
+                 + Settings.Default.MainWindowLeft
+                 + Settings.Default.MainWindowHeight
+                 + Settings.Default.MainWindowWidth) <= 0.0)
+            {
+                Settings.Default.MainWindowTop = this.Top;
+                Settings.Default.MainWindowLeft = this.Left;
+                Settings.Default.MainWindowHeight = this.Height;
+                Settings.Default.MainWindowWidth = this.Width;
+            }
+
+            this.BringIntoView();
+
+            this.Top = Settings.Default.MainWindowTop;
+            this.Left = Settings.Default.MainWindowLeft;
+            this.Height = Settings.Default.MainWindowHeight;
+            this.Width = Settings.Default.MainWindowWidth;
+
+            Settings.Default.Save();
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Settings.Default.MainWindowTop = this.Top;
+            Settings.Default.MainWindowLeft = this.Left;
+            Settings.Default.MainWindowHeight = this.Height;
+            Settings.Default.MainWindowWidth = this.Width;
+
+            Settings.Default.Save();
         }
 
         private void MenuItem_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -48,9 +85,12 @@ namespace BUZZ
 
         private void LoadMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var mainGridChild in MainGrid.Children.OfType<PullerView>())
+            foreach (var mainGridChild in MainGrid.Children.OfType<PullerContainer>())
             {
-                mainGridChild.CurrentViewModel.UnregesterCurrentThumbnail();
+                foreach (var child in mainGridChild.MultiboxingGrid.Children.OfType<PullerView>())
+                {
+                    child.CurrentViewModel.ClearThumbnailRegisters();
+                }
             }
 
             MainGrid.Children.Clear();

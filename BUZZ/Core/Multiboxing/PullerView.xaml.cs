@@ -16,7 +16,7 @@ namespace BUZZ.Core.Multiboxing
     public partial class PullerView : UserControl
     {
         public readonly PullerViewModel CurrentViewModel;
-        private Window ParentWindow;
+        private readonly Window ParentWindow;
 
         public PullerView(BuzzCharacter buzzCharacter, Window parentWindow)
         {
@@ -27,45 +27,44 @@ namespace BUZZ.Core.Multiboxing
 
             ParentWindow = parentWindow;
 
-            /*
-            // Set up things for thumbnail rendering. We must get the render area relative to the
-            // parent window, so we need to encapsulate our code in the loaded event to prevent Window.GetWindow(this)
-            // from returning null. I'm not quite sure why it behaves this way! /shrug
-            this.Loaded += (sender, args) => {
-
-                // get UserControl location relative to the parent window
-                Point CurrentRelativePoint = this.TransformToAncestor(Window.GetWindow(this))
-                    .Transform(new Point(0, 0));
-            };
-            */
-
             SizeChanged += (s, e) => { CurrentViewModel.ClientSizeChanged(GetRenderArea()); };
+
+            this.Loaded += (sender, args) =>
+            {
+                var renderArea = GetRenderArea();
+                CurrentViewModel.InitializeThumbnailInfo(new WindowInteropHelper(Window.GetWindow(this)).Handle,
+                    renderArea);
+            };
         }
 
         private void BuzzCharacterSystemInformationUpdated(object sender, Models.Events.SystemUpdatedEventArgs e)
         {
             if (e.OldSystemName == e.NewSystemName) return;
 
-            AnimateBackground(BackgroundGrid, Colors.ForestGreen,Colors.Transparent, TimeSpan.FromSeconds(30),.75);
+            AnimateBackground(BackgroundGrid, Colors.LightGreen,Colors.Transparent, TimeSpan.FromSeconds(30),1);
         }
 
         private void BringCharacterToForeground(object sender, MouseButtonEventArgs e)
         {
-            CurrentViewModel.MakePullerActiveWindow();
-
-            var renderArea = GetRenderArea();
-
-            CurrentViewModel.InitializeThumbnailInfo(new WindowInteropHelper(Window.GetWindow(this)).Handle, renderArea);
+            try
+            {
+                CurrentViewModel.MakePullerActiveWindow();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                throw;
+            }
         }
 
         public DwmClass.Rect GetRenderArea()
         {
-            Point currentControlOffset = this.TranslatePoint(new Point(0, 0), ParentWindow);
+            var currentControlOffset = this.TranslatePoint(new Point(0, 0), ParentWindow);
 
             return new DwmClass.Rect()
             {
                 Left = (int)currentControlOffset.X + (int)ViewGrid.Margin.Left,
-                Top = (int)currentControlOffset.Y + (int)ViewGrid.Margin.Top + (1/3)*(int)InnerGrid.ActualHeight,
+                Top = (int)currentControlOffset.Y + (int)ViewGrid.Margin.Top + (int)(this.ActualHeight * (1.0 / 3.0)),
                 Right = (int)currentControlOffset.X + (int)this.ActualWidth - (int)ViewGrid.Margin.Right,
                 Bottom = (int)currentControlOffset.Y + (int)this.ActualHeight - (int)ViewGrid.Margin.Bottom
             };
@@ -73,10 +72,15 @@ namespace BUZZ.Core.Multiboxing
 
         public void AnimateBackground(Panel targetPanel, Color fromColor, Color toColor, TimeSpan duration, double startingOpacity)
         {
-            ColorAnimation colorAnimation = new ColorAnimation(toColor, duration);
+            var colorAnimation = new ColorAnimation(toColor, duration);
             targetPanel.Opacity = startingOpacity;
             targetPanel.Background = new SolidColorBrush(fromColor);
             targetPanel.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+        }
+
+        private void CharacterNameLabel_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //CurrentViewModel.UnregesterCurrentThumbnail();
         }
     }
 }

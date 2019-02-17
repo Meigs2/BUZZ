@@ -23,6 +23,7 @@ namespace BUZZ.Core.Models
         public int ColumnNumber { get; set; } = 1;
         public int AccountNumber { get; set; } = 1;
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
+        public string WindowOverride { get; set; } = string.Empty;
 
         private bool isOnline = false;
         public bool IsOnline
@@ -103,6 +104,12 @@ namespace BUZZ.Core.Models
             SystemInformationUpdated?.Invoke(this, e);
         }
 
+        public event EventHandler CharacterInformationUpdated;
+        protected virtual void OnCharacterInformationUpdated()
+        {
+            CharacterInformationUpdated?.Invoke(this,new EventArgs());
+        }
+
         #endregion
 
         public BuzzCharacter()
@@ -132,6 +139,8 @@ namespace BUZZ.Core.Models
                 var onlineResult = await GetOnlineStatusAsync();
                 CharacterOnlineInfo = onlineResult.Model;
                 IsOnline = CharacterOnlineInfo.Online;
+
+                OnCharacterInformationUpdated();
             }
             catch (Exception e)
             {

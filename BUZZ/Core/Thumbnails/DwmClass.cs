@@ -32,8 +32,7 @@ namespace BUZZ.Core.Thumbnails
         public const int GWL_STYLE = -16;
 
         public const ulong WsVisible = 0x10000000L,
-            WsBorder = 0x00800000L,
-            Targetwindow = WsBorder | WsVisible;
+            TargetWindow =  WsVisible;
 
         [DllImport("user32")]
         public static extern ulong GetWindowLongA(IntPtr hWnd, int nIndex);

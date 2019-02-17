@@ -66,10 +66,24 @@ namespace BUZZ.Core.Multiboxing
             Character = buzzCharacter;
             Character.SystemInformationUpdated += CharacterSystemInformationUpdated;
             Character.OnlineStatusChanged += Character_OnlineStatusChanged;
+            Character.CharacterInformationUpdated += Character_CharacterInformationUpdated;
 
             if (Properties.Settings.Default.AlwaysShowMultiboxingControls == true)
                 IsOnline = true;
 
+        }
+
+        private void Character_CharacterInformationUpdated(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.UseThumbnailPreviews && IsOnline == true)
+            {
+                CurrentThumbnailWindowHandle = this.GetCurrentEveWindowPointer();
+            }
+
+            if (Properties.Settings.Default.UseThumbnailPreviews && IsOnline == false)
+            {
+                UnregesterCurrentThumbnail();
+            }
         }
 
         private void Character_OnlineStatusChanged(object sender, Models.Events.OnlineStatusUpdatedEventArgs e)
@@ -91,28 +105,24 @@ namespace BUZZ.Core.Multiboxing
 
         public void MakePullerActiveWindow()
         {
-            var currentEveClient = GetCurrentEveClient();
+            var currentEveClient = GetCurrentEveProcess();
 
             if (currentEveClient == null) return;
 
             WindowHelper.BringProcessToFront(currentEveClient);
-
-            if (Properties.Settings.Default.UseThumbnailPreviews != true) return;
-
-            CurrentThumbnailTargetWindow = GetCurrentClientWindowPointer();
         }
 
-        // I'm not sure why, but the pointer returned by GetCurrentEveClient() is
+        // I'm not sure why, but the pointer returned by GetCurrentEveProcess() is
         // different than the one returned by using the user32.dll method, so we must use
-        // this to get the correct pointer to be used by CurrentThumbnailTargetWindow
-        private IntPtr GetCurrentClientWindowPointer()
+        // this to get the correct pointer to be used by CurrentThumbnailWindowHandle
+        private IntPtr GetCurrentEveWindowPointer()
         {
             var availableWindows = new ObservableCollection<KeyValuePair<string, IntPtr>>();
             DwmClass.EnumWindows((hwnd, e) =>
             {
-                if (_targetWindowHandle != hwnd && (DwmClass.GetWindowLongA(hwnd, DwmClass.GWL_STYLE) & DwmClass.Targetwindow) == DwmClass.Targetwindow)
+                if (_targetRenderWindowHandle != hwnd && (DwmClass.GetWindowLongA(hwnd, DwmClass.GWL_STYLE) & DwmClass.TargetWindow) == DwmClass.TargetWindow)
                 {
-                    var sb = new StringBuilder(100);
+                    var sb = new StringBuilder(200);
                     DwmClass.GetWindowText(hwnd, sb, sb.Capacity);
 
                     var text = sb.ToString();
@@ -124,10 +134,11 @@ namespace BUZZ.Core.Multiboxing
                 return true;
             }, 0);
 
-            // find the IntPtr of our current client
+            // find the IntPtr of our current client, or return a null pointer.
             foreach (var availableWindow in availableWindows)
             {
-                if (availableWindow.Key.Contains(Character.CharacterName))
+                if (availableWindow.Key.Contains(Character.CharacterName) || 
+                    (Character.WindowOverride!=string.Empty && availableWindow.Key.Contains(Character.WindowOverride)))
                 {
                     return availableWindow.Value;
                 }
@@ -135,102 +146,108 @@ namespace BUZZ.Core.Multiboxing
             return IntPtr.Zero;
         }
 
-        private Process GetCurrentEveClient()
+        private Process GetCurrentEveProcess()
         {
             var processes = Process.GetProcesses();
             foreach (var process in processes)
             {
                 if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
 
-                if (process.MainWindowTitle.Contains(Character.CharacterDetails.CharacterName))
+                if (process.MainWindowTitle.Contains(Character.CharacterName) || 
+                    (Character.WindowOverride!=string.Empty && process.MainWindowTitle.Contains(Character.WindowOverride)))
                 {
                     return process;
                 }
             }
 
             return null;
-
         }
 
         #region DWM Thumbnails region
 
-        private IntPtr _targetWindowHandle, _thumbnailHandle;
-        private DwmClass.Rect _targetRenderAreaRectangle;
+        private IntPtr _targetRenderWindowHandle, _thumbnailStreamHandle;
+        private DwmClass.Rect _targetRenderArea;
 
-        private IntPtr _currentThumbnailTargetWindow = IntPtr.Zero;
-        public IntPtr CurrentThumbnailTargetWindow {
-            get
-            {
-                return _currentThumbnailTargetWindow;
-            }
+        private IntPtr _currentThumbnailWindowHandle = IntPtr.Zero;
+        public IntPtr CurrentThumbnailWindowHandle {
+
+            get => _currentThumbnailWindowHandle;
             set
             {
-                if (value == IntPtr.Zero)
+                if (value == IntPtr.Zero) return;
+
+                _currentThumbnailWindowHandle = value;
+
+                // Un-register old _thumbnailStreamHandle
+                if (_thumbnailStreamHandle != IntPtr.Zero)
                 {
-                     return;
+                    DwmClass.DwmUnregisterThumbnail(_thumbnailStreamHandle);
                 }
 
-                _currentThumbnailTargetWindow = value;
-
-                if (_thumbnailHandle != IntPtr.Zero)
-                {
-                    DwmClass.DwmUnregisterThumbnail(_thumbnailHandle);
-                }
-
-                //register the thumbnail with DWM
-                if (DwmClass.DwmRegisterThumbnail(_targetWindowHandle, CurrentThumbnailTargetWindow, out _thumbnailHandle) == 0)
+                // Register the new thumbnail with DWM
+                if (DwmClass.DwmRegisterThumbnail(_targetRenderWindowHandle, CurrentThumbnailWindowHandle,
+                        out _thumbnailStreamHandle) == 0)
                     UpdateThumbnail();
 
                 OnPropertyChanged();
             }
         }
 
+        public void ClearThumbnailRegisters()
+        {
+            DwmClass.DwmUnregisterThumbnail(_thumbnailStreamHandle);
+            _targetRenderWindowHandle = IntPtr.Zero;
+            _thumbnailStreamHandle = IntPtr.Zero;
+            _currentThumbnailWindowHandle = IntPtr.Zero;
+            _targetRenderArea = new DwmClass.Rect();
+        }
+
         public void UnregesterCurrentThumbnail()
         {
-            if (_thumbnailHandle != IntPtr.Zero)
+            if (_thumbnailStreamHandle != IntPtr.Zero)
             {
-                DwmClass.DwmUnregisterThumbnail(_thumbnailHandle);
+                DwmClass.DwmUnregisterThumbnail(_thumbnailStreamHandle);
             }
         }
 
         public void InitializeThumbnailInfo(IntPtr Target, DwmClass.Rect renderLocation)
         {
-            _targetWindowHandle = Target;
-            _targetRenderAreaRectangle = renderLocation;
+            _targetRenderWindowHandle = Target;
+            _targetRenderArea = renderLocation;
         }
 
         private void UpdateThumbnail()
         {
-            if (_thumbnailHandle == IntPtr.Zero)
-            {
-                return;
-            }
+            if (_thumbnailStreamHandle == IntPtr.Zero) return;
 
-            DwmClass.DwmQueryThumbnailSourceSize(_thumbnailHandle, out DwmClass.Psize size);
+            DwmClass.DwmQueryThumbnailSourceSize(_thumbnailStreamHandle, out DwmClass.Psize size);
+
+            byte opacity = (Properties.Settings.Default.ThumbnailOpacity >= 1.0? (byte)255: 
+                (Properties.Settings.Default.ThumbnailOpacity <= 0.0? (byte)0 : (byte)Math.Floor(Properties.Settings.Default.ThumbnailOpacity*256.0)));
 
             var thumbnailProperties = new DwmClass.DwmThumbnailProperties
             {
                 fVisible = true,
                 dwFlags = DwmClass.DwmTnpVisible | DwmClass.DwmTnpRectdestination | DwmClass.DwmTnpOpacity,
-                opacity = 255,
-                rcDestination = _targetRenderAreaRectangle
+                opacity = opacity,
+                rcDestination = _targetRenderArea
             };
 
-            if (size.x < _targetRenderAreaRectangle.Width)
+            if (size.x < _targetRenderArea.Width)
                 thumbnailProperties.rcDestination.Right = thumbnailProperties.rcDestination.Left + size.x;
 
-            if (size.y < _targetRenderAreaRectangle.Height)
+            if (size.y < _targetRenderArea.Height)
                 thumbnailProperties.rcDestination.Bottom = thumbnailProperties.rcDestination.Top + size.y;
 
-            DwmClass.DwmUpdateThumbnailProperties(_thumbnailHandle, ref thumbnailProperties);
+            DwmClass.DwmUpdateThumbnailProperties(_thumbnailStreamHandle, ref thumbnailProperties);
         }
-
-        #endregion
 
         public void ClientSizeChanged(DwmClass.Rect RenderArea)
         {
-            _targetRenderAreaRectangle = RenderArea;
+            _targetRenderArea = RenderArea;
             UpdateThumbnail();
         }
+
+        #endregion
     }
 }

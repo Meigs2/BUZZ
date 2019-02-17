@@ -47,6 +47,7 @@
                                                 SelectedItemBinding="{Binding Path=CharacterType}" />
                         <DataGridTextColumn Header="Grid Column" Binding="{Binding ColumnNumber}" />
                         <DataGridTextColumn Header="Grid Row" Binding="{Binding RowNumber}" />
+                        <DataGridTextColumn Header="Window Name Override" Binding="{Binding WindowOverride}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
