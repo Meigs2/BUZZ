@@ -249,5 +249,44 @@ namespace BUZZ.Core.Multiboxing
         }
 
         #endregion
+
+        /// <summary>
+        /// This function takes data from the Agents tab and plots an optimized route.
+        /// </summary>
+        public void OptimizeRouteFromClipboard()
+        {
+            List<int> systemsList = new List<int>();
+
+            // Extract our systems from the clipboard.  
+            try
+            {
+                systemsList.Clear();
+                var clipboardText = Clipboard.GetText();
+                var lines = clipboardText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                foreach (var line in lines)
+                {
+                    var result = line.Split(new[] { "\t" }, StringSplitOptions.None);
+                    if (result[0].Contains("Agent Home Base"))
+                        continue;
+
+                    systemsList.Add(SolarSystems.GetSolarSystemId(result[3]));
+                }
+
+                if (systemsList.Count == 0)
+                {
+                    return;
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                MessageBox.Show("Error parsing clipboard contents, make sure you copy from your people and places.");
+                return;
+            }
+
+            
+
+            // Character.SetWaypoints(systemsList,true);
+        }
     }
 }

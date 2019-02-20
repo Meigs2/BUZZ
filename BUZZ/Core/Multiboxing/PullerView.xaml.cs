@@ -80,7 +80,7 @@ namespace BUZZ.Core.Multiboxing
 
         private void CharacterNameLabel_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            //CurrentViewModel.UnregesterCurrentThumbnail();
+            CurrentViewModel.OptimizeRouteFromClipboard();
         }
     }
 }

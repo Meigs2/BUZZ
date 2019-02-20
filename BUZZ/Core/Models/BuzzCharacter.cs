@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows;
 using BUZZ.Core.Models.Events;
 using BUZZ.Data;
 using EVEStandard.Models;
@@ -201,6 +202,46 @@ namespace BUZZ.Core.Models
             {
                 Console.WriteLine(e);
                 return new ESIModelDTO<List<LoyaltyPoints>>();
+            }
+        }
+
+        public async Task<ESIModelDTO<List<int>>> GetRouteAsync(int origin, int destination)
+        {
+            try
+            {
+                return await EsiData.EsiClient.Routes.GetRouteV1Async(origin, destination,null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return null;
+        }
+
+        public async void SetWaypoints(List<int> systems, bool clearOtherWaypoints)
+        {
+            var auth = new AuthDTO()
+            {
+                AccessToken = AccessTokenDetails,
+                CharacterId = CharacterDetails.CharacterId,
+                Scopes = EVEStandard.Enumerations.Scopes.ESI_UI_WRITE_WAYPOINT_1
+            };
+            foreach (var system in systems)
+            {
+                // We don't want to clear all the other systems every time we add a new one, so we 
+                // check if its true, and set it to false right after.
+                if (clearOtherWaypoints)
+                {
+                    await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
+                        system);
+                    clearOtherWaypoints = false;
+                }
+                else
+                {
+                    await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
+                        system);
+                }
             }
         }
 

@@ -16,6 +16,11 @@ namespace BUZZ.Utilities
             return SystemIdToNameDictionary[systemId];
         }
 
+        public static int GetSolarSystemId(string systemName)
+        {
+            return NameToSystemIdDictionary[systemName];
+        }
+
         public static void LoadSolarSystems()
         {
             var assembly = Assembly.GetExecutingAssembly();
