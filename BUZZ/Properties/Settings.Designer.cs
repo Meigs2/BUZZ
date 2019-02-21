@@ -130,5 +130,41 @@ namespace BUZZ.Properties {
                 this["MainWindowWidth"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ClearOtherWaypointsDestinationManager {
+            get {
+                return ((bool)(this["ClearOtherWaypointsDestinationManager"]));
+            }
+            set {
+                this["ClearOtherWaypointsDestinationManager"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DestinationManagerIncludeOffline {
+            get {
+                return ((bool)(this["DestinationManagerIncludeOffline"]));
+            }
+            set {
+                this["DestinationManagerIncludeOffline"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AlwaysOnTop {
+            get {
+                return ((bool)(this["AlwaysOnTop"]));
+            }
+            set {
+                this["AlwaysOnTop"] = value;
+            }
+        }
     }
 }

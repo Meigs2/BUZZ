@@ -159,6 +159,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\CharacterManagement\CharacterManager.cs" />
+    <Compile Include="Core\Windows\DestinationManager.xaml.cs">
+      <DependentUpon>DestinationManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\LPManager\LpViewer.xaml.cs">
       <DependentUpon>LpViewer.xaml</DependentUpon>
     </Compile>
@@ -193,6 +196,10 @@
     <Compile Include="Utilities\SolarSystems.cs" />
     <Compile Include="Utilities\Startup.cs" />
     <Compile Include="Utilities\WindowHelper.cs" />
+    <Page Include="Core\Windows\DestinationManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Core\LPManager\LpViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

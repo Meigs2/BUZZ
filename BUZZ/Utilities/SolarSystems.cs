@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace BUZZ.Utilities
 {
@@ -10,6 +11,11 @@ namespace BUZZ.Utilities
     {
         private static Dictionary<int,string> SystemIdToNameDictionary { get; set; } = new Dictionary<int, string>();
         private static Dictionary<string, int> NameToSystemIdDictionary { get; set; } = new Dictionary<string, int>();
+
+        public static List<string> GetAllSolarSystems()
+        {
+            return new List<string>(NameToSystemIdDictionary.Keys);
+        }
 
         public static string GetSolarSystemName(int systemId)
         {

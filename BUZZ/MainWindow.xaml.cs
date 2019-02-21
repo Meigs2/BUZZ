@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -13,8 +14,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BUZZ.Core;
 using BUZZ.Core.CharacterManagement;
 using BUZZ.Core.LPManager;
+using BUZZ.Core.Models;
 using BUZZ.Core.Multiboxing;
 using BUZZ.Core.Settings;
 using BUZZ.Properties;
@@ -29,11 +32,13 @@ namespace BUZZ
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
             Utilities.Startup.PerformStartupActions();
             this.Closing += MainWindow_Closing;
+            Topmost = Settings.Default.AlwaysOnTop;
 
             SetupWindowPosition();
         }
@@ -110,6 +115,18 @@ namespace BUZZ
         {
             var settingsWindow = new SettingsWindow();
             settingsWindow.ShowDialog();
+        }
+
+        private void DestinationMenuButton_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var destinationWindow = new DestinationManager();
+            destinationWindow.Show();
+        }
+
+        private void AlwaysOnTopCheckbox_OnClick(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.Save();
+            Topmost = Settings.Default.AlwaysOnTop;
         }
     }
 }

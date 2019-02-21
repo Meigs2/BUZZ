@@ -1,0 +1,35 @@
+﻿<Window x:Class="BUZZ.Core.DestinationManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:BUZZ.Properties"
+        mc:Ignorable="d"
+        Title="Destination Manager" Height="200" Width="300">
+    <Grid>
+        <DockPanel>
+            <TextBlock Margin="10" TextWrapping="Wrap" DockPanel.Dock="Top" Text="Type the system you wish to set all your current online characters to, press enter to accept." HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center"/>
+            <Grid MaxHeight="30" DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="AcceptButton" VerticalAlignment="Bottom" Content="Accept" Grid.Column="0" Margin="5" Click="AcceptButton_Click"/>
+                <Button x:Name="CancelButton" VerticalAlignment="Bottom" Content="Cancel" Grid.Column="1" Margin="5" Click="CancelButton_Click"/>
+            </Grid>
+            <StackPanel VerticalAlignment="Bottom">
+                <ComboBox x:Name="SystemsComboBox" MaxHeight="25" IsEditable="True" Margin="5" KeyDown="SystemsComboBox_OnKeyDown">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+                <CheckBox Content="Clear Other Waypoints" IsChecked="{Binding Source={x:Static properties:Settings.Default}, 
+                    Path=ClearOtherWaypointsDestinationManager}" Click="Checkbox_Click" Margin="5"/>
+                <CheckBox Content="Set destination for offline characters" IsChecked="{Binding Source={x:Static properties:Settings.Default}, 
+                    Path=DestinationManagerIncludeOffline}" Click="Checkbox_Click" Margin="5"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>

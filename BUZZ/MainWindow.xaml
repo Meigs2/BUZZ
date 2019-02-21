@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BUZZ"
+        xmlns:properties="clr-namespace:BUZZ.Properties"
         mc:Ignorable="d"
         Title="BUZZ" Height="500" Width="750">
     <Grid>
@@ -11,11 +12,14 @@
             <Grid Margin="5" DockPanel.Dock="Top">
                 <Menu HorizontalAlignment="Left" VerticalAlignment="Center">
                     <MenuItem Header="File">
-                        <MenuItem x:Name="SettingsMenuItem" Header="Settings" PreviewMouseDown="SettingsMenuItem_OnPreviewMouseDown"></MenuItem>
+                        <MenuItem x:Name="SettingsMenuItem" Header="Settings" PreviewMouseDown="SettingsMenuItem_OnPreviewMouseDown"/>
+                        <CheckBox x:Name="AlwaysOnTopCheckbox" Content="Toggle Always On Top" 
+                                  IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=AlwaysOnTop}" Click="AlwaysOnTopCheckbox_OnClick" />
                     </MenuItem>
                     <MenuItem Header="Characters">
                         <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage Characters" PreviewMouseDown="MenuItem_OnMouseLeftButtonDown"/>
                         <MenuItem x:Name="CharacterLPViewer" Header="LP Viewer" PreviewMouseDown="CharacterLPViewer_Click"/>
+                        <MenuItem x:Name="DestinationMenuButton" Header="Destination Setter" PreviewMouseDown="DestinationMenuButton_OnPreviewMouseDown"/>
                     </MenuItem>
                 </Menu>
                 <Menu HorizontalAlignment="Right">
