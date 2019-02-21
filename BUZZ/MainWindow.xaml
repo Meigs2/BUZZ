@@ -13,7 +13,7 @@
                 <Menu HorizontalAlignment="Left" VerticalAlignment="Center">
                     <MenuItem Header="File">
                         <MenuItem x:Name="SettingsMenuItem" Header="Settings" PreviewMouseDown="SettingsMenuItem_OnPreviewMouseDown"/>
-                        <CheckBox x:Name="AlwaysOnTopCheckbox" Content="Toggle Always On Top" 
+                        <CheckBox x:Name="AlwaysOnTopCheckbox" Content="Always On Top" 
                                   IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=AlwaysOnTop}" Click="AlwaysOnTopCheckbox_OnClick" />
                     </MenuItem>
                     <MenuItem Header="Characters">
