@@ -21,6 +21,7 @@ using BUZZ.Core.Models;
 using BUZZ.Core.Multiboxing;
 using BUZZ.Core.Settings;
 using BUZZ.Properties;
+using BUZZ.Utilities;
 using EVEStandard;
 using EVEStandard.Enumerations;
 using EVEStandard.Models.API;
@@ -117,10 +118,10 @@ namespace BUZZ
             settingsWindow.ShowDialog();
         }
 
-        private void DestinationMenuButton_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void OpenDestinationMenu(object sender, MouseButtonEventArgs e)
         {
             var destinationWindow = new DestinationManager();
-            destinationWindow.Show();
+            destinationWindow.ShowDialog();
         }
 
         private void AlwaysOnTopCheckbox_OnClick(object sender, RoutedEventArgs e)

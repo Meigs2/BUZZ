@@ -159,6 +159,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\CharacterManagement\CharacterManager.cs" />
+    <Compile Include="Core\Models\EveSystem.cs" />
     <Compile Include="Core\Windows\DestinationManager.xaml.cs">
       <DependentUpon>DestinationManager.xaml</DependentUpon>
     </Compile>
@@ -262,6 +263,7 @@
     <EmbeddedResource Include="Data\Static\Universe\mapSolarSystems.csv" />
     <EmbeddedResource Include="Data\Static\Universe\agtAgents.csv" />
     <EmbeddedResource Include="Data\Static\Universe\agtAgentTypes.csv" />
+    <EmbeddedResource Include="Data\Static\Universe\EveMap.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

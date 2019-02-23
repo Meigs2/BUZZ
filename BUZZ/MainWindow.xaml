@@ -19,7 +19,7 @@
                     <MenuItem Header="Characters">
                         <MenuItem x:Name="CharacterManagerMenuButton" Header="Manage Characters" PreviewMouseDown="MenuItem_OnMouseLeftButtonDown"/>
                         <MenuItem x:Name="CharacterLPViewer" Header="LP Viewer" PreviewMouseDown="CharacterLPViewer_Click"/>
-                        <MenuItem x:Name="DestinationMenuButton" Header="Destination Setter" PreviewMouseDown="DestinationMenuButton_OnPreviewMouseDown"/>
+                        <MenuItem x:Name="DestinationMenuButton" Header="Destination Setter" PreviewMouseDown="OpenDestinationMenu"/>
                     </MenuItem>
                 </Menu>
                 <Menu HorizontalAlignment="Right">
