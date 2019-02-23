@@ -14,7 +14,6 @@ namespace BUZZ.Utilities
     {
         private static Dictionary<int,string> SystemIdToNameDictionary { get; set; } = new Dictionary<int, string>();
         private static Dictionary<string, int> NameToSystemIdDictionary { get; set; } = new Dictionary<string, int>();
-
         private static Dictionary<long, EveSystem> SystemIdToSolarSystem { get; set; } = new Dictionary<long, EveSystem>();
         
         public static List<string> GetAllSolarSystems()
@@ -25,6 +24,11 @@ namespace BUZZ.Utilities
         public static string GetSolarSystemName(int systemId)
         {
             return SystemIdToNameDictionary[systemId];
+        }
+
+        public static EveSystem GetEveSystem(int systemId)
+        {
+            return SystemIdToSolarSystem[systemId];
         }
 
         public static int GetSolarSystemId(string systemName)
@@ -51,46 +55,19 @@ namespace BUZZ.Utilities
             foreach (var eveSystem in map)
             {
                 SystemIdToSolarSystem.Add(eveSystem.SolarSystemId,eveSystem);
-            }
-
-
-            string resourceName = assembly.GetManifestResourceNames()
-                .Single(str => str.EndsWith("mapSolarSystems.csv"));
-
-            var stream = assembly.GetManifestResourceStream(resourceName);
-            StreamReader reader = new StreamReader(stream);
-            reader.ReadLine();
-            while (!reader.EndOfStream)
-            {
-                var currentLine = reader.ReadLine();
-                var lineValues = currentLine.Split(',');
-                try
-                {
-                    var systemName = lineValues[3];
-                    int systemId;
-                    Int32.TryParse(lineValues[2].ToString(), out systemId);
-                    SystemIdToNameDictionary.Add(systemId, systemName);
-                    NameToSystemIdDictionary.Add(systemName, systemId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
+                SystemIdToNameDictionary.Add(eveSystem.SolarSystemId,eveSystem.Name);
+                NameToSystemIdDictionary.Add(eveSystem.Name,eveSystem.SolarSystemId);
             }
         }
 
         public static List<EveSystem> GetShortestPath(int startingSystemId, int endingSystemId)
         {
-            var start = (long) startingSystemId;
-            var end = (long) endingSystemId;
-
             var path = new Dictionary<EveSystem,EveSystem>();
-            var visitedHash = new HashSet<long>();
+            var visitedHash = new HashSet<int>();
 
             Queue<EveSystem> queue = new Queue<EveSystem>();
-            queue.Enqueue(SystemIdToSolarSystem[start]);
-            visitedHash.Add(start);
+            queue.Enqueue(SystemIdToSolarSystem[startingSystemId]);
+            visitedHash.Add(startingSystemId);
             while (queue.Count > 0)
             {
                 EveSystem currentSystem = queue.Dequeue();
@@ -103,7 +80,7 @@ namespace BUZZ.Utilities
                     var currentChild = SystemIdToSolarSystem[systemId];
                     path[currentChild] = currentSystem;
 
-                    if (currentSystem.SolarSystemId == end)
+                    if (currentSystem.SolarSystemId == endingSystemId)
                     {
                         break;
                     }
@@ -112,15 +89,20 @@ namespace BUZZ.Utilities
                 }
             }
             var shortestPath = new List<EveSystem>();
-            var current = SystemIdToSolarSystem[end];
-            while (current!=SystemIdToSolarSystem[start])
+            var current = SystemIdToSolarSystem[endingSystemId];
+            while (current!=SystemIdToSolarSystem[startingSystemId])
             {
                 shortestPath.Add(current);
                 current = path[current];
             }
-            shortestPath.Add(SystemIdToSolarSystem[start]);
+            shortestPath.Add(SystemIdToSolarSystem[startingSystemId]);
             shortestPath.Reverse();
             return shortestPath;
+        }
+
+        public static void OptimizeRoute(List<int> systems, int startingSystem = 0, int endSystem = 0)
+        {
+
         }
     }
 }

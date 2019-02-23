@@ -14,25 +14,16 @@ namespace EVEMapBuilder
         public string Name { get; set; }
 
         [JsonProperty("solarSystemId")]
-        public long SolarSystemId { get; set; }
+        public int SolarSystemId { get; set; }
 
         [JsonProperty("regionId")]
-        public long RegionId { get; set; }  
+        public int RegionId { get; set; }  
 
         [JsonProperty("constellationId")]
-        public long ConstellationId { get; set; }
+        public int ConstellationId { get; set; }
 
         [JsonProperty("security")]
         public double Security { get; set; }
-
-        [JsonProperty("x")]
-        public double X { get; set; }
-
-        [JsonProperty("y")]
-        public double Y { get; set; }
-
-        [JsonProperty("z")]
-        public double Z { get; set; }
 
         [JsonProperty("border")]
         public bool Border { get; set; }
@@ -53,6 +44,6 @@ namespace EVEMapBuilder
         public bool Regional { get; set; }
 
         [JsonProperty("connections")]
-        public List<long> Connections { get; set; }
+        public List<int> Connections { get; set; }
     }
 }

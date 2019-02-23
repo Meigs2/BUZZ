@@ -260,7 +260,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Data\Static\Universe\mapSolarSystems.csv" />
     <EmbeddedResource Include="Data\Static\Universe\agtAgents.csv" />
     <EmbeddedResource Include="Data\Static\Universe\agtAgentTypes.csv" />
     <EmbeddedResource Include="Data\Static\Universe\EveMap.json" />
