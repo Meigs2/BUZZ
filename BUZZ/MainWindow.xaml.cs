@@ -89,7 +89,7 @@ namespace BUZZ
             lpViewer.Show();
         }
 
-        private void LoadMenuItem_Click(object sender, RoutedEventArgs e)
+        private async void LoadMenuItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (var mainGridChild in MainGrid.Children.OfType<PullerContainer>())
             {
@@ -110,6 +110,14 @@ namespace BUZZ
             var pullerGrid = new PullerContainer();
             MainGrid.Children.Add(pullerGrid);
             pullerGrid.LoadUserControlsToGrid(pullerList);
+
+            await SolarSystems.OptimizeRouteAsync(new List<int>()
+            {
+                30001279,
+                30001274,
+                30001272,
+                30001277
+            });
         }
 
         private void SettingsMenuItem_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
