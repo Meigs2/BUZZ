@@ -115,9 +115,8 @@ namespace BUZZ
             {
                 30001279,
                 30001274,
-                30001272,
-                30001277
-            });
+                30001272
+            }, 30001277);
         }
 
         private void SettingsMenuItem_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)

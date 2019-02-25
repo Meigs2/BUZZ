@@ -283,10 +283,6 @@ namespace BUZZ.Core.Multiboxing
                 MessageBox.Show("Error parsing clipboard contents, make sure you copy from your people and places.");
                 return;
             }
-
-            
-
-            // Character.SetWaypoints(systemsList,true);
         }
     }
 }

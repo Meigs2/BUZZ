@@ -103,7 +103,14 @@ namespace BUZZ.Utilities
             return shortestPath;
         }
 
-        public static async Task OptimizeRouteAsync(List<int> systems, int destinationSystem = 0)
+        /// <summary>
+        /// Optimizes a set of systemId's. The first system provided is considered the starting system.
+        /// If provided a destination system, the route will optimize to end in that system.
+        /// </summary>
+        /// <param name="systems"></param>
+        /// <param name="destinationSystem"></param>
+        /// <returns></returns>
+        public static async Task<List<int>> OptimizeRouteAsync(List<int> systems, int destinationSystem = 0)
         {
             var searchList = new List<Node>();
             foreach (var system in systems)
@@ -148,8 +155,15 @@ namespace BUZZ.Utilities
 
             var route = new List<Node>(searchList.Count);
 
-            var output = SearchNode(searchList[0], route, new List<Node>(), searchList.Count, endSystem);
+            var searchResult = SearchNode(searchList[0], route, new List<Node>(), searchList.Count, endSystem);
 
+            var optimizedSystems = new List<int>();
+            foreach (var node in searchResult)
+            {
+                optimizedSystems.Add(node.System.SolarSystemId);
+            }
+
+            return optimizedSystems;
         }
 
         private static List<Node> SearchNode(Node node, List<Node> route, List<Node> optimalRoute, int capacity, EveSystem endSystem = null)
@@ -176,6 +190,7 @@ namespace BUZZ.Utilities
                 }
             }
 
+
             foreach (var innerRoute in routeList)
             {
                 if (GetSum(optimalRoute) > GetSum(innerRoute))
@@ -185,6 +200,22 @@ namespace BUZZ.Utilities
                 else if (optimalRoute.Count == 0)
                 {
                     optimalRoute = innerRoute;
+                }
+            }
+
+            if (endSystem != null)
+            {
+                var endRouteList = routeList.Where(s => s[s.Count - 1].System == endSystem).ToList();
+                if (endRouteList.Count > 0)
+                {
+                    optimalRoute = endRouteList[0];
+                }
+                foreach (var innerRoute in endRouteList)
+                {
+                    if (GetSum(optimalRoute) > GetSum(innerRoute))
+                    {
+                        optimalRoute = innerRoute;
+                    }
                 }
             }
 
@@ -212,7 +243,7 @@ namespace BUZZ.Utilities
             return newList;
         }
 
-        private class Node
+        public class Node
         {
             public EveSystem System { get; set; }
             public Dictionary<Node,int> Connections { get; set; }
