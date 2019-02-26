@@ -112,6 +112,7 @@ namespace BUZZ.Utilities
         /// <returns></returns>
         public static async Task<List<int>> OptimizeRouteAsync(List<int> systems, int destinationSystem = 0)
         {
+            // Convert systems to a list of nodes to visit.
             var searchList = new List<Node>();
             foreach (var system in systems)
             {
@@ -122,6 +123,7 @@ namespace BUZZ.Utilities
                 });
             }
 
+            // If there's a end system we want to visit, add it.
             var endSystem = new EveSystem();
             if (destinationSystem != 0)
             {
@@ -132,6 +134,19 @@ namespace BUZZ.Utilities
                     Connections = new Dictionary<Node, int>()
                 });
             }
+
+            // Filter duplicates from list
+            var copyList = new List<Node>();
+            var systemList = new List<EveSystem>();
+            foreach (var node in searchList)
+            {
+                if (!systemList.Contains(node.System))
+                {
+                    copyList.Add(node);
+                    systemList.Add(node.System);
+                }
+            }
+            searchList = copyList;
 
             // Get distances
             foreach (var searchNode in searchList)
@@ -154,13 +169,31 @@ namespace BUZZ.Utilities
             }
 
             var route = new List<Node>(searchList.Count);
+            var searchResult = new List<Node>();
 
-            var searchResult = SearchNode(searchList[0], route, new List<Node>(), searchList.Count, endSystem);
+            if (endSystem.Name != null)
+            {
+                searchResult = SearchNode(searchList[0], route, new List<Node>(), searchList.Count, endSystem);
+            }
+            else
+            {
+                searchResult = SearchNode(searchList[0], route, new List<Node>(), searchList.Count);
+            }
 
+            // Convert nodes to systemId's
             var optimizedSystems = new List<int>();
             foreach (var node in searchResult)
             {
                 optimizedSystems.Add(node.System.SolarSystemId);
+            }
+
+            // If the destination system provided is the start of the route, we
+            // need to set the last destination in the route to the desto system, the
+            // algorithm will ignore it, and the optimal back to the starting system is a tour,
+            // and is always optimal.
+            if (destinationSystem != 0 && optimizedSystems[0] == destinationSystem)
+            {
+                optimizedSystems.Add(destinationSystem);
             }
 
             return optimizedSystems;
@@ -186,7 +219,7 @@ namespace BUZZ.Utilities
                 {
                     route = MakeRouteCopy(route);
                     optimalRoute = MakeRouteCopy(optimalRoute);
-                    routeList.Add(SearchNode(connection.Key, route, optimalRoute, capacity)); 
+                    routeList.Add(SearchNode(connection.Key, route, optimalRoute, capacity, endSystem)); 
                 }
             }
 

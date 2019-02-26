@@ -158,12 +158,36 @@ namespace BUZZ.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AlwaysOnTop {
+        public bool UseDestinationSystem {
             get {
-                return ((bool)(this["AlwaysOnTop"]));
+                return ((bool)(this["UseDestinationSystem"]));
             }
             set {
-                this["AlwaysOnTop"] = value;
+                this["UseDestinationSystem"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30000001")]
+        public int DestinationSystem {
+            get {
+                return ((int)(this["DestinationSystem"]));
+            }
+            set {
+                this["DestinationSystem"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("45")]
+        public int SystemChangeFadeTime {
+            get {
+                return ((int)(this["SystemChangeFadeTime"]));
+            }
+            set {
+                this["SystemChangeFadeTime"] = value;
             }
         }
     }

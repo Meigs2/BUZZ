@@ -21,7 +21,7 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Viewbox Margin="5">
-                        <Label x:Name="CharacterNameLabel" Content="{Binding Character.CharacterName}" HorizontalAlignment="Center" PreviewMouseDown="CharacterNameLabel_OnPreviewMouseDown" ></Label>
+                        <Label x:Name="CharacterNameLabel" Content="{Binding Character.CharacterName}" HorizontalAlignment="Center" PreviewMouseDown="OptimizeRouteFromClipboard" ></Label>
                     </Viewbox>
                     <Separator VerticalAlignment="Bottom"/>
                 </Grid>

@@ -39,7 +39,7 @@ namespace BUZZ
             InitializeComponent();
             Utilities.Startup.PerformStartupActions();
             this.Closing += MainWindow_Closing;
-            Topmost = Settings.Default.AlwaysOnTop;
+            Topmost = Settings.Default.UseDestinationSystem;
 
             SetupWindowPosition();
         }
@@ -89,7 +89,7 @@ namespace BUZZ
             lpViewer.Show();
         }
 
-        private async void LoadMenuItem_Click(object sender, RoutedEventArgs e)
+        private void LoadMenuItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (var mainGridChild in MainGrid.Children.OfType<PullerContainer>())
             {
@@ -110,13 +110,6 @@ namespace BUZZ
             var pullerGrid = new PullerContainer();
             MainGrid.Children.Add(pullerGrid);
             pullerGrid.LoadUserControlsToGrid(pullerList);
-
-            await SolarSystems.OptimizeRouteAsync(new List<int>()
-            {
-                30001279,
-                30001274,
-                30001272
-            }, 30001277);
         }
 
         private void SettingsMenuItem_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -134,7 +127,7 @@ namespace BUZZ
         private void AlwaysOnTopCheckbox_OnClick(object sender, RoutedEventArgs e)
         {
             Settings.Default.Save();
-            Topmost = Settings.Default.AlwaysOnTop;
+            Topmost = Settings.Default.UseDestinationSystem;
         }
     }
 }

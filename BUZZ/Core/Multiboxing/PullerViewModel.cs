@@ -23,6 +23,8 @@ namespace BUZZ.Core.Multiboxing
 
         public BuzzCharacter Character { get; set; }
 
+        public List<int> WaypointSystems { get; set; } = new List<int>();
+
         // Acts as a override in case we dont want to show the UserControl, but still want to know if the character is
         // online.
         public bool IsVisible { get; set; }
@@ -253,14 +255,13 @@ namespace BUZZ.Core.Multiboxing
         /// <summary>
         /// This function takes data from the Agents tab and plots an optimized route.
         /// </summary>
-        public void OptimizeRouteFromClipboard()
+        public async Task OptimizeRouteFromClipboard()
         {
             List<int> systemsList = new List<int>();
 
             // Extract our systems from the clipboard.  
             try
             {
-                systemsList.Clear();
                 var clipboardText = Clipboard.GetText();
                 var lines = clipboardText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
                 foreach (var line in lines)
@@ -283,6 +284,22 @@ namespace BUZZ.Core.Multiboxing
                 MessageBox.Show("Error parsing clipboard contents, make sure you copy from your people and places.");
                 return;
             }
+
+            // Set search node to be our current system
+            systemsList[0] = Character.CurrentSolarSystem.SolarSystemId;
+
+            // Optimize our route
+            var optimized = await SolarSystems.OptimizeRouteAsync(systemsList,
+                Properties.Settings.Default.UseDestinationSystem ? Properties.Settings.Default.DestinationSystem : 0);
+
+            // (remove first element, as we're already here)
+            optimized.RemoveAt(0);
+
+            foreach (var waypoint in optimized)
+            {
+                WaypointSystems.Add(waypoint);
+            }
+            Character.SetWaypoints(optimized,true);
         }
     }
 }

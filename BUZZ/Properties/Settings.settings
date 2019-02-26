@@ -35,8 +35,14 @@
     <Setting Name="DestinationManagerIncludeOffline" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AlwaysOnTop" Type="System.Boolean" Scope="User">
+    <Setting Name="UseDestinationSystem" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DestinationSystem" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30000001</Value>
+    </Setting>
+    <Setting Name="SystemChangeFadeTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">45</Value>
     </Setting>
   </Settings>
 </SettingsFile>

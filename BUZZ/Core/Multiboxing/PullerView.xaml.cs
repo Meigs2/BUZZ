@@ -41,19 +41,28 @@ namespace BUZZ.Core.Multiboxing
         {
             if (e.OldSystemName == e.NewSystemName) return;
 
-            AnimateBackground(BackgroundGrid, Colors.LightGreen,Colors.Transparent, TimeSpan.FromSeconds(30),1);
+            if (CurrentViewModel.WaypointSystems.Contains(e.NewSystemId))
+            {
+                CurrentViewModel.WaypointSystems.Remove(e.NewSystemId);
+                AnimateBackground(BackgroundGrid, Colors.LightSkyBlue, Colors.Transparent, TimeSpan.FromSeconds(Properties.Settings.Default.SystemChangeFadeTime), 1);
+            }
+            else
+            {
+                AnimateBackground(BackgroundGrid, Colors.LightGreen,Colors.Transparent, TimeSpan.FromSeconds(Properties.Settings.Default.SystemChangeFadeTime),1);
+            }
+
         }
 
         private void BringCharacterToForeground(object sender, MouseButtonEventArgs e)
         {
             try
             {
+                BackgroundGrid.Background = new SolidColorBrush(Colors.Transparent);
                 CurrentViewModel.MakePullerActiveWindow();
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
-                throw;
             }
         }
 
@@ -78,9 +87,9 @@ namespace BUZZ.Core.Multiboxing
             targetPanel.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
-        private void CharacterNameLabel_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private async void OptimizeRouteFromClipboard(object sender, MouseButtonEventArgs e)
         {
-            CurrentViewModel.OptimizeRouteFromClipboard();
+            await CurrentViewModel.OptimizeRouteFromClipboard();
         }
     }
 }

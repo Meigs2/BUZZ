@@ -35,6 +35,17 @@
                         <Label Content="Client Thumbnail Preview Opacity"/>
                     </StackPanel>
                 </Grid>
+                <CheckBox Content="Use final system in route optimization" ToolTip="Any route optimization done will set the last system in the route to the system below." 
+                    IsChecked="{Binding Source={x:Static properties:Settings.Default }, 
+                    Path=UseDestinationSystem}" Margin="5"/>
+                <ComboBox x:Name="SystemsComboBox" MaxHeight="25" IsEditable="True" Margin="5" IsEnabled="{Binding Source={x:Static properties:Settings.Default }, 
+                        Path=UseDestinationSystem}" Width="200" HorizontalAlignment="Left">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
             </StackPanel>
         </GroupBox>  
     </Grid>
