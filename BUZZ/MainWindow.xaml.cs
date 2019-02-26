@@ -39,7 +39,7 @@ namespace BUZZ
             InitializeComponent();
             Utilities.Startup.PerformStartupActions();
             this.Closing += MainWindow_Closing;
-            Topmost = Settings.Default.UseDestinationSystem;
+            Topmost = Settings.Default.AlwaysOnTop;
 
             SetupWindowPosition();
         }
@@ -127,7 +127,7 @@ namespace BUZZ
         private void AlwaysOnTopCheckbox_OnClick(object sender, RoutedEventArgs e)
         {
             Settings.Default.Save();
-            Topmost = Settings.Default.UseDestinationSystem;
+            Topmost = Settings.Default.AlwaysOnTop;
         }
     }
 }
