@@ -2,11 +2,12 @@
 
 Some of BUZZ's features include:
 1. Live client thumbnail previews like EVE-O
+1. System change notifications so you never forget a character on a gate!
 1. Route optimization for mission locations
 1. An LP viewer
 1. Character-wide destination setter
 
-And more to come!
+And more features not listed here, with more to come!
 
 ## FAQ:
 1. Does this tool break the EVE Online EULA?
