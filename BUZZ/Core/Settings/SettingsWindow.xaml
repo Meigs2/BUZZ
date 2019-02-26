@@ -12,14 +12,14 @@
             <StackPanel>
                 <CheckBox Content="Display all characters regardless of online status." IsChecked="{Binding Source={x:Static properties:Settings.Default }, 
                         Path=AlwaysShowMultiboxingControls}" Margin="5"/>
-                <Grid Margin="5" ToolTip="It's you keep this set to 10. Do not set to over 15 minutes or so.">
+                <Grid Margin="5" ToolTip="It's recommended you keep this set to 10. Do not set to over 15 minutes or so.">
                     <StackPanel Orientation="Horizontal">
                         <TextBox MaxWidth="50" MinWidth="50" HorizontalAlignment="Left" TextAlignment="Center" FontSize="18"
                                  Text="{Binding Source={x:Static properties:Settings.Default}, Path=CharacterAuthRefreshRateMinutes}"/>
                         <Label Content="Character Authorization Token refresh rate (in minutes)"/>
                     </StackPanel>
                 </Grid>
-                <Grid Margin="5" ToolTip="Its recommended you keep this at 3 seconds.">
+                <Grid Margin="5" ToolTip="It's recommended you keep this at 3 seconds.">
                     <StackPanel Orientation="Horizontal">
                         <TextBox MaxWidth="50" MinWidth="50" HorizontalAlignment="Left" TextAlignment="Center" FontSize="18"
                                  Text="{Binding Source={x:Static properties:Settings.Default}, Path=CharacterInfoRefreshRateSeconds}"/>
