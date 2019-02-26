@@ -46,6 +46,13 @@
                         </ItemsPanelTemplate>
                     </ComboBox.ItemsPanel>
                 </ComboBox>
+                <Grid Margin="5" ToolTip="">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox MaxWidth="50" MinWidth="50" HorizontalAlignment="Left" TextAlignment="Center" FontSize="18"
+                                 Text="{Binding Source={x:Static properties:Settings.Default}, Path=SystemChangeFadeTime}"/>
+                        <Label Content="Solar system change color fadeout time (in seconds)"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </GroupBox>  
     </Grid>
