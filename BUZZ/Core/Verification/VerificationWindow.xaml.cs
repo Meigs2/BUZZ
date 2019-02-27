@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using BUZZ.Core.CharacterManagement;
@@ -47,18 +48,30 @@ namespace BUZZ.Core.Verification
                 Character.AccessTokenDetails = await _client.SSOv2.VerifyAuthorizationAsync(Authorization);
                 Character.CharacterDetails = _client.SSOv2.GetCharacterDetailsAsync(Character.AccessTokenDetails.AccessToken);
 
-                foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
+                // If this character is already added to our list, ask if we want to replace it.
+                if (CharacterManager.CurrentInstance.CharacterList.Single(c => c.CharacterName == Character.CharacterName) != null)
                 {
-                    if (buzzCharacter.CharacterName == Character.CharacterName)
+                    var duplicate =
+                        CharacterManager.CurrentInstance.CharacterList.Single(c =>
+                            c.CharacterName == Character.CharacterName);
+                    var dialogResult = MessageBox.Show("Character is already added, would you like to replace it?","",MessageBoxButton.YesNo);
+
+                    if (dialogResult == MessageBoxResult.Yes)
                     {
-                        MessageBox.Show("Character is already added");
+                        CharacterManager.CurrentInstance.CharacterList[
+                                CharacterManager.CurrentInstance.CharacterList.IndexOf(duplicate)] =
+                            Character;
+                        Close();
+                        return;
+                    }
+                    else
+                    {
                         Close();
                         return;
                     }
                 }
 
                 CharacterManager.CurrentInstance.CharacterList.Add(Character);
-
                 Close();
             }
             catch (Exception error)
