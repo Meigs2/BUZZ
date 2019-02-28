@@ -26,6 +26,9 @@ namespace BUZZ.Core.Models
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
         public string WindowOverride { get; set; } = string.Empty;
 
+        private static readonly log4net.ILog log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private bool isOnline = false;
         public bool IsOnline
         {
@@ -145,6 +148,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
+                log.Fatal("Unable refresh character information for " + CharacterName);
+                log.Error(e);
                 Console.WriteLine(e);
             }
         }
@@ -164,7 +169,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                log.Error("Unable to get online status for " + CharacterName);
+                log.Error(e);
                 return new ESIModelDTO<CharacterOnline>();
             }
         }
@@ -182,7 +188,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                log.Error("Unable to get location of " + CharacterName);
+                log.Error(e);
                 return new ESIModelDTO<CharacterLocation>();
             }
         }
@@ -200,7 +207,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                log.Error("Unable to get loyalty points for " + CharacterName);
+                log.Error(e);
                 return new ESIModelDTO<List<LoyaltyPoints>>();
             }
         }
@@ -213,7 +221,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                log.Error("Unable to return a route for " + CharacterName);
+                log.Error(e);
             }
 
             return null;
@@ -221,27 +230,35 @@ namespace BUZZ.Core.Models
 
         public async void SetWaypoints(List<int> systems, bool clearOtherWaypoints)
         {
-            var auth = new AuthDTO()
+            try
             {
-                AccessToken = AccessTokenDetails,
-                CharacterId = CharacterDetails.CharacterId,
-                Scopes = EVEStandard.Enumerations.Scopes.ESI_UI_WRITE_WAYPOINT_1
-            };
-            foreach (var system in systems)
+                var auth = new AuthDTO()
+                {
+                    AccessToken = AccessTokenDetails,
+                    CharacterId = CharacterDetails.CharacterId,
+                    Scopes = EVEStandard.Enumerations.Scopes.ESI_UI_WRITE_WAYPOINT_1
+                };
+                foreach (var system in systems)
+                {
+                    // We don't want to clear all the other systems every time we add a new one, so we 
+                    // check if its true, and set it to false right after.
+                    if (clearOtherWaypoints)
+                    {
+                        await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
+                            system);
+                        clearOtherWaypoints = false;
+                    }
+                    else
+                    {
+                        await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
+                            system);
+                    }
+                }
+            }
+            catch (Exception e)
             {
-                // We don't want to clear all the other systems every time we add a new one, so we 
-                // check if its true, and set it to false right after.
-                if (clearOtherWaypoints)
-                {
-                    await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
-                        system);
-                    clearOtherWaypoints = false;
-                }
-                else
-                {
-                    await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
-                        system);
-                }
+                log.Error("Unable to set waypoints for " + CharacterName);
+                log.Error(e);
             }
         }
 
@@ -257,6 +274,8 @@ namespace BUZZ.Core.Models
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                log.Error("Unable to refresh Authorization for " + CharacterName);
+                log.Error(e);
             }
         }
 

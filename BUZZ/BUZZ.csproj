@@ -77,6 +77,9 @@
     <Reference Include="Costura, Version=3.3.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.3.2\lib\net40\Costura.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
     </Reference>
@@ -160,6 +163,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\CharacterManagement\CharacterManager.cs" />
     <Compile Include="Core\Models\EveSystem.cs" />
+    <Compile Include="Core\Models\LoggerBase.cs" />
     <Compile Include="Core\Windows\DestinationManager.xaml.cs">
       <DependentUpon>DestinationManager.xaml</DependentUpon>
     </Compile>
