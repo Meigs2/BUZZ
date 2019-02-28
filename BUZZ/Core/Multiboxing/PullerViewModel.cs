@@ -286,7 +286,7 @@ namespace BUZZ.Core.Multiboxing
             }
 
             // Set search node to be our current system
-            systemsList[0] = Character.CurrentSolarSystem.SolarSystemId;
+            systemsList.Insert(0, Character.CurrentSolarSystem.SolarSystemId);
 
             // Optimize our route
             var optimized = await SolarSystems.OptimizeRouteAsync(systemsList,
