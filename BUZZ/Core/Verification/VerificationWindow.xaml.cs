@@ -51,7 +51,7 @@ namespace BUZZ.Core.Verification
                 Character.CharacterDetails = _client.SSOv2.GetCharacterDetailsAsync(Character.AccessTokenDetails.AccessToken);
 
                 // If this character is already added to our list, ask if we want to replace it.
-                if (CharacterManager.CurrentInstance.CharacterList.Single(c => c.CharacterName == Character.CharacterName) != null)
+                if (CharacterManager.CurrentInstance.CharacterList.SingleOrDefault(c => c.CharacterName == Character.CharacterName) != null)
                 {
                     var duplicate =
                         CharacterManager.CurrentInstance.CharacterList.Single(c =>
