@@ -26,7 +26,7 @@ namespace BUZZ.Core.Models
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
         public string WindowOverride { get; set; } = string.Empty;
 
-        private static readonly log4net.ILog log =
+        private static readonly log4net.ILog Log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private bool isOnline = false;
@@ -116,16 +116,8 @@ namespace BUZZ.Core.Models
 
         #endregion
 
-        public BuzzCharacter()
-        {
-
-        }
-
         #region Methods
 
-        /// <summary>
-        /// Updates 
-        /// </summary>
         public async Task RefreshCharacterInformation()
         {
             try
@@ -148,9 +140,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                log.Fatal("Unable refresh character information for " + CharacterName);
-                log.Error(e);
-                Console.WriteLine(e);
+                Log.Error("Unable refresh character information for " + CharacterName);
+                Log.Error(e);
             }
         }
 
@@ -169,8 +160,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                log.Error("Unable to get online status for " + CharacterName);
-                log.Error(e);
+                Log.Error("Unable to get online status for " + CharacterName);
+                Log.Error(e);
                 return new ESIModelDTO<CharacterOnline>();
             }
         }
@@ -188,8 +179,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                log.Error("Unable to get location of " + CharacterName);
-                log.Error(e);
+                Log.Error("Unable to get location of " + CharacterName);
+                Log.Error(e);
                 return new ESIModelDTO<CharacterLocation>();
             }
         }
@@ -207,8 +198,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                log.Error("Unable to get loyalty points for " + CharacterName);
-                log.Error(e);
+                Log.Error("Unable to get loyalty points for " + CharacterName);
+                Log.Error(e);
                 return new ESIModelDTO<List<LoyaltyPoints>>();
             }
         }
@@ -221,8 +212,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                log.Error("Unable to return a route for " + CharacterName);
-                log.Error(e);
+                Log.Error("Unable to return a route for " + CharacterName);
+                Log.Error(e);
             }
 
             return null;
@@ -257,8 +248,8 @@ namespace BUZZ.Core.Models
             }
             catch (Exception e)
             {
-                log.Error("Unable to set waypoints for " + CharacterName);
-                log.Error(e);
+                Log.Error("Unable to set waypoints for " + CharacterName);
+                Log.Error(e);
             }
         }
 
@@ -274,8 +265,8 @@ namespace BUZZ.Core.Models
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                log.Error("Unable to refresh Authorization for " + CharacterName);
-                log.Error(e);
+                Log.Error("Unable to refresh Authorization for " + CharacterName);
+                Log.Error(e);
             }
         }
 

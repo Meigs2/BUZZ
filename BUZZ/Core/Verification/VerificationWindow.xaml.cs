@@ -20,10 +20,12 @@ namespace BUZZ.Core.Verification
         public BuzzCharacter Character { get; set; } = new BuzzCharacter();
         private Authorization Authorization { get; }
 
-
+        public static readonly log4net.ILog Log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public VerificationWindow(EVEStandardAPI client)
         {
+            Log.Info("New Verification Window Opened");
             InitializeComponent();
 
             _client = client;
@@ -76,6 +78,7 @@ namespace BUZZ.Core.Verification
             }
             catch (Exception error)
             {
+                Log.Error(error);
                 MessageBox.Show("Authorization verification failed, error message:\n" + error.Message +
                                 "\n Source: \n" + error.Source + "\n\n Please click the image again and re-enter the code in the web prompt.");
             }

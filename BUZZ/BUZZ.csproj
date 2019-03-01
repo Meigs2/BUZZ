@@ -163,7 +163,6 @@
     </ApplicationDefinition>
     <Compile Include="Core\CharacterManagement\CharacterManager.cs" />
     <Compile Include="Core\Models\EveSystem.cs" />
-    <Compile Include="Core\Models\LoggerBase.cs" />
     <Compile Include="Core\Windows\DestinationManager.xaml.cs">
       <DependentUpon>DestinationManager.xaml</DependentUpon>
     </Compile>
