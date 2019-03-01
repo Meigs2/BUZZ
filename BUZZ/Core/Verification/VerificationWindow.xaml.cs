@@ -18,7 +18,7 @@ namespace BUZZ.Core.Verification
     {
         private readonly EVEStandardAPI _client;
         public BuzzCharacter Character { get; set; } = new BuzzCharacter();
-        private Authorization Authorization { get; }
+        private Authorization Authorization { get; set; }
 
         public static readonly log4net.ILog Log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -29,12 +29,12 @@ namespace BUZZ.Core.Verification
             InitializeComponent();
 
             _client = client;
-            Authorization = _client.SSOv2.AuthorizeToEVEUri(EsiScopes.Scopes);
         }
 
 
         private void LoginImage_Click(object sender, MouseButtonEventArgs e)
         {
+            Authorization = _client.SSOv2.AuthorizeToEVEUri(EsiScopes.Scopes);
             Process.Start(Authorization.SignInURI);
         }
 
