@@ -42,7 +42,7 @@ namespace BUZZ.Core
             }
         }
 
-        private void AcceptButton_Click(object sender, RoutedEventArgs e)
+        private async void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace BUZZ.Core
                 {
                     if (buzzCharacter.IsOnline || Properties.Settings.Default.DestinationManagerIncludeOffline)
                     {
-                        buzzCharacter.SetWaypoints(new List<int>(){SystemID}, Properties.Settings.Default.ClearOtherWaypointsDestinationManager);
+                        await buzzCharacter.SetWaypoints(new List<int>(){SystemID}, Properties.Settings.Default.ClearOtherWaypointsDestinationManager);
                     }
                 }
                 Close();

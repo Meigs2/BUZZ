@@ -3,8 +3,12 @@ using BUZZ.Core.Verification;
 using BUZZ.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using BUZZ.Core.Hotkeys;
 
 namespace BUZZ.Core.CharacterManagement
 {
@@ -13,6 +17,8 @@ namespace BUZZ.Core.CharacterManagement
     /// </summary>
     public partial class CharacterManagementWindow : Window
     {
+        private int HotkeyColumnIndex = 8;
+
         public CharacterManagementWindow()
         {
             InitializeComponent();
@@ -49,6 +55,21 @@ namespace BUZZ.Core.CharacterManagement
         {
             await CharacterManager.RefreshCharacterInformation();
             CharacterManager.SerializeCharacterData();
+        }
+
+        private void DataGrid_OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var source = (DataGrid) e.Source;
+            var currentCell = source.CurrentCell;
+            var column = currentCell.Column;
+
+            var selectedCharacter = (BuzzCharacter) currentCell.Item;
+
+            if (column.DisplayIndex == HotkeyColumnIndex)
+            {
+                var a = new CharacterHotkeyWindow();
+                a.Show();
+            }
         }
     }
 }

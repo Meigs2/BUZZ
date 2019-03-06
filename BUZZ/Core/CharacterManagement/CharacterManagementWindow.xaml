@@ -31,7 +31,8 @@
                 and press "Remove Characters"
             </TextBlock>
             <Grid>
-                <DataGrid x:Name="DataGrid" Margin="5" AutoGenerateColumns="False" ItemsSource="{Binding CharacterList}" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Extended">
+                <DataGrid x:Name="DataGrid" Margin="5" AutoGenerateColumns="False" ItemsSource="{Binding CharacterList}"  
+                          CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Extended" PreviewMouseDoubleClick="DataGrid_OnPreviewMouseDoubleClick">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Active">
                             <DataGridTemplateColumn.CellTemplate>
@@ -48,6 +49,7 @@
                         <DataGridTextColumn Header="Grid Column" Binding="{Binding ColumnNumber}" />
                         <DataGridTextColumn Header="Grid Row" Binding="{Binding RowNumber}" />
                         <DataGridTextColumn Header="Window Name Override" Binding="{Binding WindowOverride}"/>
+                        <DataGridTextColumn Header="Select Window Hotkey" Binding="{Binding KeybindString}" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

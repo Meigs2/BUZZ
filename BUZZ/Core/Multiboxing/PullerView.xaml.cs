@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using BUZZ.Core.Models;
 using BUZZ.Core.Thumbnails;
+using mrousavy;
 
 namespace BUZZ.Core.Multiboxing
 {

@@ -299,7 +299,7 @@ namespace BUZZ.Core.Multiboxing
             {
                 WaypointSystems.Add(waypoint);
             }
-            Character.SetWaypoints(optimized,true);
+            await Character.SetWaypoints(optimized,true);
         }
     }
 }

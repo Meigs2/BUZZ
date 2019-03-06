@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using BUZZ.Core.Models.Events;
 using BUZZ.Data;
 using EVEStandard.Models;
@@ -11,7 +12,6 @@ using EVEStandard.Models.SSO;
 
 namespace BUZZ.Core.Models
 {
-
     public class BuzzCharacter
     {
         #region Properties
@@ -25,6 +25,21 @@ namespace BUZZ.Core.Models
         public int AccountNumber { get; set; } = 1;
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
         public string WindowOverride { get; set; } = string.Empty;
+        public ModifierKeys FocusModifierKeys { get; set; } = new ModifierKeys();
+        public Key FocusKeys { get; set; } = new Key();
+        public string KeybindString {
+            get
+            {
+                string combo = string.Empty;
+                combo += FocusModifierKeys;
+                if (FocusModifierKeys != ModifierKeys.None)
+                {
+                    combo += " + ";
+                }
+                combo += FocusKeys;
+                return combo;
+            }
+        }
 
         private static readonly log4net.ILog Log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -219,7 +234,7 @@ namespace BUZZ.Core.Models
             return null;
         }
 
-        public async void SetWaypoints(List<int> systems, bool clearOtherWaypoints)
+        public async Task SetWaypoints(List<int> systems, bool clearOtherWaypoints)
         {
             try
             {

@@ -165,6 +165,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\CharacterManagement\CharacterManager.cs" />
+    <Compile Include="Core\Hotkeys\CharacterHotkeyWindow.xaml.cs">
+      <DependentUpon>CharacterHotkeyWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Models\EveSystem.cs" />
     <Compile Include="Core\Windows\DestinationManager.xaml.cs">
       <DependentUpon>DestinationManager.xaml</DependentUpon>
@@ -203,6 +206,10 @@
     <Compile Include="Utilities\SolarSystems.cs" />
     <Compile Include="Utilities\Startup.cs" />
     <Compile Include="Utilities\WindowHelper.cs" />
+    <Page Include="Core\Hotkeys\CharacterHotkeyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Core\Windows\DestinationManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
