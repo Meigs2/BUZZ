@@ -259,6 +259,7 @@ namespace BUZZ.Core.Models
                         await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
                             system);
                     }
+                    Log.Info("Successfully set waypoint to " + system);
                 }
             }
             catch (Exception e)

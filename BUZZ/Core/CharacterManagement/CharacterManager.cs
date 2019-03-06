@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using BUZZ.Core.Models;
@@ -118,6 +119,7 @@ namespace BUZZ.Core.CharacterManagement
                 var taskList = new List<Task>();
                 foreach (var buzzCharacter in CurrentInstance.CharacterList)
                 {
+                    ThreadPool.QueueUserWorkItem( async o => await buzzCharacter.RefreshCharacterInformation());
                     taskList.Add(buzzCharacter.RefreshCharacterInformation());
                 }
                 await Task.WhenAll(taskList.ToArray());
@@ -127,6 +129,11 @@ namespace BUZZ.Core.CharacterManagement
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public async void RefreshGivenCharacterInformation(BuzzCharacter character)
+        {
+            await character.RefreshCharacterInformation();
         }
 
         private static async Task RefreshAccessTokensAsync()

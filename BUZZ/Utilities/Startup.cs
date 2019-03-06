@@ -16,7 +16,7 @@ namespace BUZZ.Utilities
 
         public static async void PerformStartupActions()
         {
-
+            Log.Info("New BUZZ session started.");
             SolarSystems.LoadSolarSystems();
             await CharacterManager.Initialize();
         }

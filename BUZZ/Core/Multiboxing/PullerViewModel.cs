@@ -20,6 +20,8 @@ namespace BUZZ.Core.Multiboxing
 {
     public class PullerViewModel : ViewModelBase
     {
+        private static readonly log4net.ILog Log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public BuzzCharacter Character { get; set; }
 
@@ -264,11 +266,14 @@ namespace BUZZ.Core.Multiboxing
             {
                 var clipboardText = Clipboard.GetText();
                 var lines = clipboardText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                Log.Info("Systems Parsed from Clipboard:");
                 foreach (var line in lines)
                 {
                     var result = line.Split(new[] { "\t" }, StringSplitOptions.None);
                     if (result[0].Contains("Agent Home Base"))
                         continue;
+
+                    Log.Info(result[3]);
 
                     systemsList.Add(SolarSystems.GetSolarSystemId(result[3]));
                 }
@@ -280,6 +285,7 @@ namespace BUZZ.Core.Multiboxing
             }
             catch (Exception exception)
             {
+                Log.Error(exception);
                 Console.WriteLine(exception);
                 MessageBox.Show("Error parsing clipboard contents, make sure you copy from your people and places.");
                 return;
@@ -292,6 +298,12 @@ namespace BUZZ.Core.Multiboxing
             var optimized = await SolarSystems.OptimizeRouteAsync(systemsList,
                 Properties.Settings.Default.UseDestinationSystem ? Properties.Settings.Default.DestinationSystem : 0);
 
+            Log.Info("Optimized Systems (including starting system)");
+            foreach (var i in optimized)
+            {
+                Log.Info(i);
+            }
+
             // (remove first element, as we're already here)
             optimized.RemoveAt(0);
 
@@ -299,6 +311,7 @@ namespace BUZZ.Core.Multiboxing
             {
                 WaypointSystems.Add(waypoint);
             }
+            Log.Info("Setting waypoints for " + Character.CharacterName);
             await Character.SetWaypoints(optimized,true);
         }
     }
