@@ -51,9 +51,9 @@ namespace BUZZ.Core.CharacterManagement
             DataGrid.ItemsSource = CharacterManager.CurrentInstance.CharacterList;
         }
 
-        private async void CharacterManagementWindow_OnClosing(object sender, CancelEventArgs e)
+        private void CharacterManagementWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            await CharacterManager.RefreshCharacterInformation();
+            CharacterManager.RefreshCharacterInformation();
             CharacterManager.SerializeCharacterData();
         }
 

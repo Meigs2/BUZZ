@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using BUZZ.Core.Models.Events;
 using BUZZ.Data;
+using BUZZ.Utilities;
 using EVEStandard.Models;
 using EVEStandard.Models.API;
 using EVEStandard.Models.SSO;
@@ -138,20 +140,26 @@ namespace BUZZ.Core.Models
             try
             {
                 var locationResult = await GetLocationAsync();
-                var solarSystemModel = new SolarSystemModel()
-                {
-                    SolarSystemId = locationResult.Model.SolarSystemId,
-                    StationId = locationResult.Model.StationId.GetValueOrDefault(),
-                    StructureId = locationResult.Model.StationId.GetValueOrDefault(),
-                    SystemName = Utilities.SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
-                };
-                CurrentSolarSystem = solarSystemModel;
 
-                var onlineResult = await GetOnlineStatusAsync();
-                CharacterOnlineInfo = onlineResult.Model;
-                IsOnline = CharacterOnlineInfo.Online;
+                    var solarSystemModel = new SolarSystemModel()
+                    {
+                        SolarSystemId = locationResult.Model.SolarSystemId,
+                        StationId = locationResult.Model.StationId.GetValueOrDefault(),
+                        StructureId = locationResult.Model.StationId.GetValueOrDefault(),
+                        SystemName = SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
+                    };
 
-                OnCharacterInformationUpdated();
+                    var onlineResult = await GetOnlineStatusAsync();
+                    CharacterOnlineInfo = onlineResult.Model;
+                    IsOnline = CharacterOnlineInfo.Online;
+
+                    // If this is not called, there is an odd thread access error that gets thrown here,
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        CurrentSolarSystem = solarSystemModel;
+                    });
+
+                    OnCharacterInformationUpdated();
             }
             catch (Exception e)
             {
@@ -248,6 +256,7 @@ namespace BUZZ.Core.Models
                 {
                     // We don't want to clear all the other systems every time we add a new one, so we 
                     // check if its true, and set it to false right after.
+                    Log.Info(CharacterName + " is setting a waypoint to" + SolarSystems.GetSolarSystemName(system));
                     if (clearOtherWaypoints)
                     {
                         await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
@@ -259,12 +268,12 @@ namespace BUZZ.Core.Models
                         await EsiData.EsiClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, clearOtherWaypoints,
                             system);
                     }
-                    Log.Info("Successfully set waypoint to " + system);
+                    Log.Info(CharacterName + " successfully set waypoint to " + SolarSystems.GetSolarSystemName(system));
                 }
             }
             catch (Exception e)
             {
-                Log.Error("Unable to set waypoints for " + CharacterName);
+                Log.Error("Unable to set waypoint(s) for " + CharacterName);
                 Log.Error(e);
             }
         }
@@ -277,6 +286,7 @@ namespace BUZZ.Core.Models
             try
             {
                 AccessTokenDetails = await EsiData.EsiClient.SSOv2.GetRefreshTokenAsync(AccessTokenDetails.RefreshToken);
+                Log.Info(CharacterName + "'s AuthToken has been refreshed successfully.");
             }
             catch (Exception e)
             {

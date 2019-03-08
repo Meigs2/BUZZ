@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using System.Windows.Threading;
 using BUZZ.Core.Models;
 using BUZZ.Core.Verification;
 using BUZZ.Data;
+using log4net.Config;
 using Polenter.Serialization;
 using Exception = System.Exception;
 
@@ -59,13 +61,13 @@ namespace BUZZ.Core.CharacterManagement
         /// <summary>
         /// Preforms startup actions for the Character side of things in BUZZ.
         /// </summary>
-        public static async Task Initialize()
+        public static void Initialize()
         {
             currentInstance = new CharacterManager();
 
             DeserializeCharacterData();
-            await RefreshAccessTokensAsync();
-            await RefreshCharacterInformation();
+            RefreshAccessTokensAsync();
+            RefreshCharacterInformation();
             SerializeCharacterData();
             SetUpRefreshTimers();
         }
@@ -94,11 +96,11 @@ namespace BUZZ.Core.CharacterManagement
         #endregion
 
 
-        private static async void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
+        private static void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
         {
             try
             {
-                await RefreshCharacterInformation();
+               RefreshCharacterInformation();
             }
             catch (Exception exception)
             {
@@ -106,23 +108,24 @@ namespace BUZZ.Core.CharacterManagement
             }
         }
 
-        private static async void AuthRefreshTimer_Tick(object sender, EventArgs e)
+        private static void AuthRefreshTimer_Tick(object sender, EventArgs e)
         {
-            await RefreshAccessTokensAsync();
+            RefreshAccessTokensAsync();
             SerializeCharacterData();
         }
 
-        public static async Task RefreshCharacterInformation()
+        public static void RefreshCharacterInformation()
         {
             try
             {
-                var taskList = new List<Task>();
                 foreach (var buzzCharacter in CurrentInstance.CharacterList)
                 {
-                    ThreadPool.QueueUserWorkItem( async o => await buzzCharacter.RefreshCharacterInformation());
-                    taskList.Add(buzzCharacter.RefreshCharacterInformation());
+
+                    ThreadPool.QueueUserWorkItem(async a =>
+                    {
+                        await buzzCharacter.RefreshCharacterInformation();
+                    });
                 }
-                await Task.WhenAll(taskList.ToArray());
             }
             catch (Exception e)
             {
@@ -136,17 +139,17 @@ namespace BUZZ.Core.CharacterManagement
             await character.RefreshCharacterInformation();
         }
 
-        private static async Task RefreshAccessTokensAsync()
+        private static void RefreshAccessTokensAsync()
         {
             try
             {
-                var taskList = new List<Task>();
-                foreach (var buzzCharacter in CharacterManager.currentInstance.CharacterList)
+                foreach (var buzzCharacter in CurrentInstance.CharacterList)
                 {
-                    taskList.Add(buzzCharacter.RefreshAuthToken());
+                    ThreadPool.QueueUserWorkItem(async a =>
+                    {
+                        await buzzCharacter.RefreshAuthToken();
+                    });
                 }
-
-                await Task.WhenAll(taskList.ToArray());
             }
             catch (Exception e)
             {

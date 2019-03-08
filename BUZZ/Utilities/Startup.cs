@@ -5,7 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using BUZZ.Core;
 using BUZZ.Core.CharacterManagement;
+using log4net;
 using System.Reflection;
+using log4net.Appender;
+using log4net.Core;
+using log4net.Layout;
+using log4net.Repository.Hierarchy;
 
 namespace BUZZ.Utilities
 {
@@ -14,11 +19,11 @@ namespace BUZZ.Utilities
         private static readonly log4net.ILog Log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static async void PerformStartupActions()
+        public static void PerformStartupActions()
         {
-            Log.Info("New BUZZ session started.");
+            Log.Info("Logger Initialized and new BUZZ session started.");
             SolarSystems.LoadSolarSystems();
-            await CharacterManager.Initialize();
+            CharacterManager.Initialize();
         }
     }
 }
