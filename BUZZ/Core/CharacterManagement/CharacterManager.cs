@@ -120,7 +120,6 @@ namespace BUZZ.Core.CharacterManagement
             {
                 foreach (var buzzCharacter in CurrentInstance.CharacterList)
                 {
-
                     ThreadPool.QueueUserWorkItem(async a =>
                     {
                         await buzzCharacter.RefreshCharacterInformation();

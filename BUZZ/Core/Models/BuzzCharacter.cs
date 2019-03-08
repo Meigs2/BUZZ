@@ -140,26 +140,24 @@ namespace BUZZ.Core.Models
             try
             {
                 var locationResult = await GetLocationAsync();
+                var solarSystemModel = new SolarSystemModel()
+                {
+                    SolarSystemId = locationResult.Model.SolarSystemId,
+                    StationId = locationResult.Model.StationId.GetValueOrDefault(),
+                    StructureId = locationResult.Model.StationId.GetValueOrDefault(),
+                    SystemName = SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
+                };
+                var onlineResult = await GetOnlineStatusAsync();
 
-                    var solarSystemModel = new SolarSystemModel()
-                    {
-                        SolarSystemId = locationResult.Model.SolarSystemId,
-                        StationId = locationResult.Model.StationId.GetValueOrDefault(),
-                        StructureId = locationResult.Model.StationId.GetValueOrDefault(),
-                        SystemName = SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
-                    };
+                CharacterOnlineInfo = onlineResult.Model;
+                IsOnline = CharacterOnlineInfo.Online;
+                // If this is not called, there is an odd thread access error that gets thrown here,
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CurrentSolarSystem = solarSystemModel;
+                });
 
-                    var onlineResult = await GetOnlineStatusAsync();
-                    CharacterOnlineInfo = onlineResult.Model;
-                    IsOnline = CharacterOnlineInfo.Online;
-
-                    // If this is not called, there is an odd thread access error that gets thrown here,
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        CurrentSolarSystem = solarSystemModel;
-                    });
-
-                    OnCharacterInformationUpdated();
+                OnCharacterInformationUpdated();
             }
             catch (Exception e)
             {
