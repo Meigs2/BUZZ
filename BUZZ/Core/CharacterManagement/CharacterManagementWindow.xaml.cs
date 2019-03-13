@@ -68,7 +68,13 @@ namespace BUZZ.Core.CharacterManagement
             if (column.DisplayIndex == HotkeyColumnIndex)
             {
                 var a = new CharacterHotkeyWindow();
-                a.Show();
+                a.ShowDialog();
+                if (!a.Canceled)
+                {
+                    selectedCharacter.FocusKeysList = a.KeyList;
+                    selectedCharacter.FocusModifierKeysList = a.ModifierKeyList;
+                    selectedCharacter.RegisterActivateHotkey();
+                }
             }
         }
     }

@@ -203,6 +203,8 @@
     <Compile Include="Data\EsiData.cs" />
     <Compile Include="Data\EsiScopes.cs" />
     <Compile Include="Utilities\Agents.cs" />
+    <Compile Include="Utilities\HotkeyHelper.cs" />
+    <Compile Include="Utilities\KeyboardUtility.cs" />
     <Compile Include="Utilities\LogConfigurator.cs" />
     <Compile Include="Utilities\SolarSystems.cs" />
     <Compile Include="Utilities\Startup.cs" />

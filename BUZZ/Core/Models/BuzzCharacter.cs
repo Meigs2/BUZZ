@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -8,9 +10,11 @@ using System.Windows.Threading;
 using BUZZ.Core.Models.Events;
 using BUZZ.Data;
 using BUZZ.Utilities;
+using EVEStandard.API;
 using EVEStandard.Models;
 using EVEStandard.Models.API;
 using EVEStandard.Models.SSO;
+using mrousavy;
 
 namespace BUZZ.Core.Models
 {
@@ -27,19 +31,25 @@ namespace BUZZ.Core.Models
         public int AccountNumber { get; set; } = 1;
         public CharacterOnline CharacterOnlineInfo { get; set; } = new CharacterOnline();
         public string WindowOverride { get; set; } = string.Empty;
-        public ModifierKeys FocusModifierKeys { get; set; } = new ModifierKeys();
-        public Key FocusKeys { get; set; } = new Key();
-        public string KeybindString {
+        public List<Key> FocusKeysList { get; set; } = new List<Key>();
+        public List<ModifierKeys> FocusModifierKeysList { get; set; } = new List<ModifierKeys>();
+        public HotKey ActiveHotKey;
+
+        public string KeybindString
+        {
             get
             {
-                string combo = string.Empty;
-                combo += FocusModifierKeys;
-                if (FocusModifierKeys != ModifierKeys.None)
+                string s = string.Empty;
+                foreach (var modifierKeyse in FocusModifierKeysList)
                 {
-                    combo += " + ";
+                    s += modifierKeyse;
                 }
-                combo += FocusKeys;
-                return combo;
+
+                foreach (var key in FocusKeysList)
+                {
+                    s += key;
+                }
+                return s;
             }
         }
 
@@ -292,6 +302,67 @@ namespace BUZZ.Core.Models
                 Log.Error("Unable to refresh Authorization for " + CharacterName);
                 Log.Error(e);
             }
+        }
+
+        public void RegisterActivateHotkey()
+        {
+            if (ActiveHotKey != null)
+            {
+                ActiveHotKey.Dispose();
+            }
+            var window = Application.Current.MainWindow;
+            if (FocusKeysList.Count == 0)
+            {
+                // unregister hotkey if we have no keys to press.
+                ActiveHotKey = new HotKey(ModifierKeys.None, Key.None, window);
+            }
+            else
+            {
+                var keys = new Key();
+                // Build key
+                foreach (var key in FocusKeysList)
+                {
+                    keys = keys | key;
+                }
+
+                var modifierKeys = new ModifierKeys();
+                foreach (var mKey in FocusModifierKeysList)
+                {
+                    modifierKeys = modifierKeys | mKey;
+                }
+
+                ActiveHotKey = new HotKey(modifierKeys, keys, window, delegate
+                {
+                    MessageBox.Show("Ctrl + Alt + S was pressed!");
+                    BringToForeground();
+                });
+            }
+        }
+
+        public void BringToForeground()
+        {
+            var currentEveClient = GetCurrentEveProcess();
+
+            if (currentEveClient == null) return;
+
+            ThreadPool.QueueUserWorkItem( a => { WindowHelper.BringProcessToFront(currentEveClient); });
+        }
+
+        private Process GetCurrentEveProcess()
+        {
+            var processes = Process.GetProcesses();
+            foreach (var process in processes)
+            {
+                if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
+
+                if (process.MainWindowTitle.Contains(CharacterName) ||
+                    (CharacterName != string.Empty && process.MainWindowTitle.Contains(CharacterName)))
+                {
+                    return process;
+                }
+            }
+
+            return null;
         }
 
         #endregion

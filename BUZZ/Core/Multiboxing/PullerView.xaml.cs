@@ -44,8 +44,10 @@ namespace BUZZ.Core.Multiboxing
 
             if (CurrentViewModel.WaypointSystems.Contains(e.NewSystemId))
             {
+                var lighterBlue = Colors.LightSkyBlue;
+                lighterBlue.A = 50;
                 CurrentViewModel.WaypointSystems.Remove(e.NewSystemId);
-                AnimateBackground(BackgroundGrid, Colors.LightSkyBlue, Colors.Transparent, TimeSpan.FromSeconds(Properties.Settings.Default.SystemChangeFadeTime), 1);
+                AnimateBackground(BackgroundGrid, Colors.LightSkyBlue, lighterBlue, TimeSpan.FromSeconds(Properties.Settings.Default.SystemChangeFadeTime), 1);
             }
             else
             {
@@ -59,7 +61,7 @@ namespace BUZZ.Core.Multiboxing
             try
             {
                 BackgroundGrid.Background = new SolidColorBrush(Colors.Transparent);
-                CurrentViewModel.MakePullerActiveWindow();
+                CurrentViewModel.Character.BringToForeground();
             }
             catch (Exception exception)
             {

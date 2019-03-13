@@ -8,8 +8,19 @@
         Title="Set Hotkey" Height="200" Width="300">
     <Grid>
         <DockPanel>
+            <Grid DockPanel.Dock="Top" Margin="5">
+                <TextBlock TextWrapping="WrapWithOverflow" Text="Press the key combination you would like to use for the keybind, and click accept when you are finished." HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
+            </Grid>
             <Grid DockPanel.Dock="Bottom">
-                <Button Content="Start" MaxHeight="35" VerticalAlignment="Bottom" Margin="5"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Content="Accept" MaxHeight="35" VerticalAlignment="Bottom" Margin="5" Click="Button_Accept_Click"/>
+                <Button Content="Cancel" MaxHeight="35" VerticalAlignment="Bottom" Margin="5" Click="Button_Cancel_Click" Grid.Column="1"/>
+            </Grid>
+            <Grid>
+                <Label x:Name="TestingLabel" Content="None" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" ></Label>
             </Grid>
         </DockPanel>
     </Grid>

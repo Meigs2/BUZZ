@@ -6,7 +6,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:model="clr-namespace:BUZZ.Core.Models"
         mc:Ignorable="d"
-        Title="CharacterManagementWindow" Height="500" Width="786"
+        Title="CharacterManagementWindow" Height="500" Width="900"
         Closing="CharacterManagementWindow_OnClosing">
     <Window.Resources>
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"

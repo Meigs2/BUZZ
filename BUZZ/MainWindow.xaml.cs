@@ -95,6 +95,10 @@ namespace BUZZ
             var pullerGrid = new PullerContainer();
             MainGrid.Children.Add(pullerGrid);
             pullerGrid.LoadUserControlsToGrid(pullerList);
+            foreach (var buzzCharacter in CharacterManager.CurrentInstance.CharacterList)
+            {
+                buzzCharacter.RegisterActivateHotkey();
+            }
         }
 
         private void SettingsMenuItem_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)

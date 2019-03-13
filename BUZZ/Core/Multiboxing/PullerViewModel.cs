@@ -107,18 +107,6 @@ namespace BUZZ.Core.Multiboxing
             CurrentSolarSystem = e.NewSystemName;
         }
 
-        public void MakePullerActiveWindow()
-        {
-            var currentEveClient = GetCurrentEveProcess();
-
-            if (currentEveClient == null) return;
-
-            WindowHelper.BringProcessToFront(currentEveClient);
-        }
-
-        // I'm not sure why, but the pointer returned by GetCurrentEveProcess() is
-        // different than the one returned by using the user32.dll method, so we must use
-        // this to get the correct pointer to be used by CurrentThumbnailWindowHandle
         private IntPtr GetCurrentEveWindowPointer()
         {
             var availableWindows = new ObservableCollection<KeyValuePair<string, IntPtr>>();
@@ -148,23 +136,6 @@ namespace BUZZ.Core.Multiboxing
                 }
             }
             return IntPtr.Zero;
-        }
-
-        private Process GetCurrentEveProcess()
-        {
-            var processes = Process.GetProcesses();
-            foreach (var process in processes)
-            {
-                if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
-
-                if (process.MainWindowTitle.Contains(Character.CharacterName) || 
-                    (Character.WindowOverride!=string.Empty && process.MainWindowTitle.Contains(Character.WindowOverride)))
-                {
-                    return process;
-                }
-            }
-
-            return null;
         }
 
         #region DWM Thumbnails region
