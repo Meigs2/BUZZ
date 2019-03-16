@@ -266,8 +266,7 @@ namespace BUZZ.Core.Multiboxing
             systemsList.Insert(0, Character.CurrentSolarSystem.SolarSystemId);
 
             // Optimize our route
-            var optimized = await SolarSystems.OptimizeRouteAsync(systemsList,
-                Properties.Settings.Default.UseDestinationSystem ? Properties.Settings.Default.DestinationSystem : 0);
+            var optimized = await SolarSystems.OptimizeRouteAsync(systemsList);
 
             Log.Info("Optimized Systems (including starting system)");
             foreach (var i in optimized)
@@ -278,12 +277,20 @@ namespace BUZZ.Core.Multiboxing
             // (remove first element, as we're already here)
             optimized.RemoveAt(0);
 
+            // if the user speficied they always want to visit a system for route planning, add it at the end.
+            if (Properties.Settings.Default.UseDestinationSystem && 
+                optimized[optimized.Count - 1] != Properties.Settings.Default.DestinationSystem)
+            {
+                optimized.Add(Properties.Settings.Default.DestinationSystem);
+            }
+
             foreach (var waypoint in optimized)
             {
                 WaypointSystems.Add(waypoint);
             }
+
             Log.Info("Setting waypoints for " + Character.CharacterName);
-            await Character.SetWaypoints(optimized,true);
+            await Character.SetWaypoints(optimized, true);
         }
     }
 }

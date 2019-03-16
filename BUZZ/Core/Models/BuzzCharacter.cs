@@ -353,7 +353,6 @@ namespace BUZZ.Core.Models
         {
             if (currentProcess == null) return;
 
-
             WindowHelper.BringProcessToFront(currentProcess);
         }
 

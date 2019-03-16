@@ -110,7 +110,7 @@ namespace BUZZ.Utilities
         /// <param name="systems"></param>
         /// <param name="destinationSystem"></param>
         /// <returns></returns>
-        public static async Task<List<int>> OptimizeRouteAsync(List<int> systems, int destinationSystem = 0)
+        public static async Task<List<int>> OptimizeRouteAsync(List<int> systems)
         {
             // Convert systems to a list of nodes to visit.
             var searchList = new List<Node>();
@@ -119,18 +119,6 @@ namespace BUZZ.Utilities
                 searchList.Add(new Node()
                 {
                     System = SystemIdToSolarSystem[system],
-                    Connections = new Dictionary<Node, int>()
-                });
-            }
-
-            // If there's a end system we want to visit, add it.
-            var endSystem = new EveSystem();
-            if (destinationSystem != 0)
-            {
-                endSystem = SystemIdToSolarSystem[destinationSystem];
-                searchList.Add(new Node()
-                {
-                    System = endSystem,
                     Connections = new Dictionary<Node, int>()
                 });
             }
@@ -170,15 +158,8 @@ namespace BUZZ.Utilities
 
             var route = new List<Node>(searchList.Count);
             var searchResult = new List<Node>();
-
-            if (endSystem.Name != null)
-            {
-                searchResult = SearchNode(searchList[0], route, new List<Node>(), searchList.Count, endSystem);
-            }
-            else
-            {
-                searchResult = SearchNode(searchList[0], route, new List<Node>(), searchList.Count);
-            }
+        
+            searchResult = SearchNode(searchList[0], route, new List<Node>(), searchList.Count);
 
             // Convert nodes to systemId's
             var optimizedSystems = new List<int>();
@@ -187,19 +168,10 @@ namespace BUZZ.Utilities
                 optimizedSystems.Add(node.System.SolarSystemId);
             }
 
-            // If the destination system provided is the start of the route, we
-            // need to set the last destination in the route to the desto system, the
-            // algorithm will ignore it, and the optimal back to the starting system is a tour,
-            // and is always optimal.
-            if (destinationSystem != 0 && optimizedSystems[0] == destinationSystem)
-            {
-                optimizedSystems.Add(destinationSystem);
-            }
-
             return optimizedSystems;
         }
 
-        private static List<Node> SearchNode(Node node, List<Node> route, List<Node> optimalRoute, int capacity, EveSystem endSystem = null)
+        private static List<Node> SearchNode(Node node, List<Node> route, List<Node> optimalRoute, int capacity)
         {
             // for stupid c# reasons, we need to make copies of all the lists, as 
             // c# will pass them by reference, and that's not what we want.
@@ -219,7 +191,7 @@ namespace BUZZ.Utilities
                 {
                     route = MakeRouteCopy(route);
                     optimalRoute = MakeRouteCopy(optimalRoute);
-                    routeList.Add(SearchNode(connection.Key, route, optimalRoute, capacity, endSystem)); 
+                    routeList.Add(SearchNode(connection.Key, route, optimalRoute, capacity)); 
                 }
             }
 
@@ -233,22 +205,6 @@ namespace BUZZ.Utilities
                 else if (optimalRoute.Count == 0)
                 {
                     optimalRoute = innerRoute;
-                }
-            }
-
-            if (endSystem != null)
-            {
-                var endRouteList = routeList.Where(s => s[s.Count - 1].System == endSystem).ToList();
-                if (endRouteList.Count > 0)
-                {
-                    optimalRoute = endRouteList[0];
-                }
-                foreach (var innerRoute in endRouteList)
-                {
-                    if (GetSum(optimalRoute) > GetSum(innerRoute))
-                    {
-                        optimalRoute = innerRoute;
-                    }
                 }
             }
 
