@@ -344,7 +344,6 @@ namespace BUZZ.Core.Models
 
                 ActiveHotKey = new HotKey(modifierKeys, keys, window, delegate
                 {
-                    MessageBox.Show("Ctrl + Alt + S was pressed!");
                     BringToForeground();
                 });
             }
