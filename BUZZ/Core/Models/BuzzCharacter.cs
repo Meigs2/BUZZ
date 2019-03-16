@@ -56,6 +56,8 @@ namespace BUZZ.Core.Models
         private static readonly log4net.ILog Log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        private Process currentProcess;
+
         private bool isOnline = false;
         public bool IsOnline
         {
@@ -166,8 +168,17 @@ namespace BUZZ.Core.Models
                 {
                     CurrentSolarSystem = solarSystemModel;
                 });
-
                 OnCharacterInformationUpdated();
+
+                // Get current process
+                if (IsOnline && currentProcess == null)
+                {
+                    currentProcess = GetCurrentEveProcess();
+                }
+                else if (!IsOnline)
+                {
+                    currentProcess = null;
+                }
             }
             catch (Exception e)
             {
@@ -341,11 +352,10 @@ namespace BUZZ.Core.Models
 
         public void BringToForeground()
         {
-            var currentEveClient = GetCurrentEveProcess();
+            if (currentProcess == null) return;
 
-            if (currentEveClient == null) return;
 
-            ThreadPool.QueueUserWorkItem( a => { WindowHelper.BringProcessToFront(currentEveClient); });
+            WindowHelper.BringProcessToFront(currentProcess);
         }
 
         private Process GetCurrentEveProcess()

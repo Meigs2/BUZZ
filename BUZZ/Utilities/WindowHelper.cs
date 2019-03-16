@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace BUZZ.Utilities
 {
@@ -11,17 +12,18 @@ namespace BUZZ.Utilities
         [System.Runtime.InteropServices.DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(IntPtr handle);
         [System.Runtime.InteropServices.DllImport("User32.dll")]
-        private static extern bool ShowWindow(IntPtr handle, ShowWindowCommands nCmdShow);
-        [System.Runtime.InteropServices.DllImport("User32.dll")]
         private static extern bool IsIconic(IntPtr handle);
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindowAsync(IntPtr hWnd, ShowWindowCommands nCmdShow);
 
         public static void BringProcessToFront(Process process)
         {
             IntPtr handle = process.MainWindowHandle;
             if (IsIconic(handle))
             {
-                ShowWindow(handle, ShowWindowCommands.Restore);
+                ShowWindowAsync(handle, ShowWindowCommands.Restore);
             }
+            
 
             SetForegroundWindow(handle);
         }
