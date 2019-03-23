@@ -298,6 +298,10 @@
     <Resource Include="Resources\Images\LoginButton.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EveLogReader\SharpReader.csproj">
+      <Project>{974ffb2a-f312-4dec-8e26-605c6b6121cb}</Project>
+      <Name>SharpReader</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EVEStandard\EVEStandard.csproj">
       <Project>{f98fd7d8-81b8-4621-842e-f23b9a508b64}</Project>
       <Name>EVEStandard</Name>

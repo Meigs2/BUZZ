@@ -283,7 +283,6 @@ namespace BUZZ.Core.Multiboxing
             {
                 optimized.Add(Properties.Settings.Default.DestinationSystem);
             }
-
             foreach (var waypoint in optimized)
             {
                 WaypointSystems.Add(waypoint);

@@ -1,4 +1,5 @@
-﻿using BUZZ.Core.Models;
+﻿using System;
+using BUZZ.Core.Models;
 using BUZZ.Core.Verification;
 using BUZZ.Data;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ namespace BUZZ.Core.CharacterManagement
     /// </summary>
     public partial class CharacterManagementWindow : Window
     {
+        private static readonly log4net.ILog Log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private int HotkeyColumnIndex = 8;
 
         public CharacterManagementWindow()
@@ -59,22 +63,31 @@ namespace BUZZ.Core.CharacterManagement
 
         private void DataGrid_OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var source = (DataGrid) e.Source;
-            var currentCell = source.CurrentCell;
-            var column = currentCell.Column;
-
-            var selectedCharacter = (BuzzCharacter) currentCell.Item;
-
-            if (column.DisplayIndex == HotkeyColumnIndex)
+            try
             {
-                var a = new CharacterHotkeyWindow();
-                a.ShowDialog();
-                if (!a.Canceled)
+                var source = (DataGrid)e.Source;
+                var currentCell = source.CurrentCell;
+                var column = currentCell.Column;
+
+                var selectedCharacter = (BuzzCharacter)currentCell.Item;
+
+                if (column.DisplayIndex == HotkeyColumnIndex)
                 {
-                    selectedCharacter.FocusKeysList = a.KeyList;
-                    selectedCharacter.FocusModifierKeysList = a.ModifierKeyList;
-                    selectedCharacter.RegisterActivateHotkey();
+                    var a = new CharacterHotkeyWindow();
+                    a.ShowDialog();
+                    if (!a.Canceled)
+                    {
+                        selectedCharacter.FocusKeysList = a.KeyList;
+                        selectedCharacter.FocusModifierKeysList = a.ModifierKeyList;
+                        selectedCharacter.RegisterActivateHotkey();
+                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                Console.WriteLine(exception);
+                throw;
             }
         }
     }

@@ -27,6 +27,7 @@ namespace BUZZ
             Topmost = Settings.Default.AlwaysOnTop;
 
             SetupWindowPosition();
+            var a = new SharpReader.EveLogReader();
         }
 
         private void SetupWindowPosition()
