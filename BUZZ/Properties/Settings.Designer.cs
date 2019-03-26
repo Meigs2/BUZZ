@@ -202,5 +202,17 @@ namespace BUZZ.Properties {
                 this["AlwaysOnTop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LogsPath {
+            get {
+                return ((string)(this["LogsPath"]));
+            }
+            set {
+                this["LogsPath"] = value;
+            }
+        }
     }
 }

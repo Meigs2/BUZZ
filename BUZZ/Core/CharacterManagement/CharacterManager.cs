@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using BUZZ.Core.Models;
 using BUZZ.Core.Verification;
 using BUZZ.Data;
+using CSELR;
 using log4net.Config;
 using Polenter.Serialization;
 using Exception = System.Exception;
@@ -37,6 +38,8 @@ namespace BUZZ.Core.CharacterManagement
         #region Properties and Lists
 
         public BindingList<BuzzCharacter> CharacterList { get; set; } = new BindingList<BuzzCharacter>();
+        
+        private EveLogReader LogReader { get; set; }
 
         public DispatcherTimer AuthRefreshTimer = new DispatcherTimer()
         {
@@ -54,6 +57,7 @@ namespace BUZZ.Core.CharacterManagement
 
         private CharacterManager()
         {
+            LogReader = new CSELR.EveLogReader();
         }
 
         #region Public Methods
@@ -95,17 +99,9 @@ namespace BUZZ.Core.CharacterManagement
 
         #endregion
 
-
         private static void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
         {
-            try
-            {
-               RefreshCharacterInformation();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-            }
+            RefreshCharacterInformation();
         }
 
         private static void AuthRefreshTimer_Tick(object sender, EventArgs e)
@@ -189,10 +185,6 @@ namespace BUZZ.Core.CharacterManagement
                 Console.WriteLine(e);
             }
         }
-
-        #endregion
-
-        #region Private Methods
 
         #endregion
     }

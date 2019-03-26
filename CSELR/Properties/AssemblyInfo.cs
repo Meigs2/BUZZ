@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EveLogReader")]
+[assembly: AssemblyTitle("CSELR")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("EveLogReader")]
+[assembly: AssemblyProduct("CSELR")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("974ffb2a-f312-4dec-8e26-605c6b6121cb")]
+[assembly: Guid("a2ca0c23-6385-402b-b73c-ce767baacc65")]
 
 // Version information for an assembly consists of the following four values:
 //
