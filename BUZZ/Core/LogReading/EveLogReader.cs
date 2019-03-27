@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace CSELR
+namespace BUZZ.Core.LogReading
 {
     public class EveLogReader
     {
@@ -71,7 +71,9 @@ namespace CSELR
                     // ignored
                 }
             }
-            // Init Refresher (to make sure we actually get updates as to when logs are updated)
+            // Init Refresher (to make sure we EVE actually dumps chat history to the log files, CCPLS)
+            // Actually not CCPLS theres probably a very valid reason CCP wont just dump chat logs 24/7.
+            // ...but then again they dump combat logs right away so who knows...
             FileRefreshTimer.Tick += FileRefreshTimerOnTick;
             FileRefreshTimer.Start();
             FileRefreshTimerOnTick(null,null);
@@ -84,8 +86,8 @@ namespace CSELR
                 IncludeSubdirectories = true,
                 Filter = "*.txt",
             };
-            Watcher.Created += LocalChatWatcherOnCreated;
-            Watcher.Changed += LocalChatWatcherOnChanged;
+            Watcher.Created += ChatLogsWatcher_FileCreated;
+            Watcher.Changed += ChatLogsWathcer_FileChanged;
             Watcher.EnableRaisingEvents = true;
         }
 
@@ -106,12 +108,12 @@ namespace CSELR
             }
         }
 
-        private void LocalChatWatcherOnChanged(object sender, FileSystemEventArgs e)
+        private void ChatLogsWathcer_FileChanged(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine(e.FullPath + " Changed");
         }
 
-        private void LocalChatWatcherOnCreated(object sender, FileSystemEventArgs e)
+        private void ChatLogsWatcher_FileCreated(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine(e.FullPath + " Created");
         }

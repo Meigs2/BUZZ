@@ -168,6 +168,7 @@
     <Compile Include="Core\Hotkeys\CharacterHotkeyWindow.xaml.cs">
       <DependentUpon>CharacterHotkeyWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\LogReading\EveLogReader.cs" />
     <Compile Include="Core\Models\EveSystem.cs" />
     <Compile Include="Core\Windows\DestinationManager.xaml.cs">
       <DependentUpon>DestinationManager.xaml</DependentUpon>
@@ -298,10 +299,6 @@
     <Resource Include="Resources\Images\LoginButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CSELR\CSELR.csproj">
-      <Project>{a2ca0c23-6385-402b-b73c-ce767baacc65}</Project>
-      <Name>CSELR</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EVEStandard\EVEStandard.csproj">
       <Project>{f98fd7d8-81b8-4621-842e-f23b9a508b64}</Project>
       <Name>EVEStandard</Name>

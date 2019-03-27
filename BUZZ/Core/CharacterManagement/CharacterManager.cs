@@ -8,11 +8,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using BUZZ.Core.LogReading;
 using BUZZ.Core.Models;
 using BUZZ.Core.Verification;
 using BUZZ.Data;
-using CSELR;
-using log4net.Config;
 using Polenter.Serialization;
 using Exception = System.Exception;
 
@@ -57,7 +56,7 @@ namespace BUZZ.Core.CharacterManagement
 
         private CharacterManager()
         {
-            LogReader = new CSELR.EveLogReader();
+            LogReader = new EveLogReader();
         }
 
         #region Public Methods

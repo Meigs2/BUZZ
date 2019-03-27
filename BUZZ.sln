@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUZZ", "BUZZ\BUZZ.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EVEStandard", "EVEStandard\EVEStandard.csproj", "{F98FD7D8-81B8-4621-842E-F23B9A508B64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSELR", "CSELR\CSELR.csproj", "{A2CA0C23-6385-402B-B73C-CE767BAACC65}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{F98FD7D8-81B8-4621-842E-F23B9A508B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F98FD7D8-81B8-4621-842E-F23B9A508B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F98FD7D8-81B8-4621-842E-F23B9A508B64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A2CA0C23-6385-402B-B73C-CE767BAACC65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2CA0C23-6385-402B-B73C-CE767BAACC65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2CA0C23-6385-402B-B73C-CE767BAACC65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2CA0C23-6385-402B-B73C-CE767BAACC65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
