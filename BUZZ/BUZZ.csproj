@@ -169,6 +169,7 @@
       <DependentUpon>CharacterHotkeyWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\LogReading\EveLogReader.cs" />
+    <Compile Include="Core\LogReading\LogFile.cs" />
     <Compile Include="Core\Models\EveSystem.cs" />
     <Compile Include="Core\Windows\DestinationManager.xaml.cs">
       <DependentUpon>DestinationManager.xaml</DependentUpon>

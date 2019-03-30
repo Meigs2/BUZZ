@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
@@ -10,112 +11,67 @@ namespace BUZZ.Core.LogReading
 {
     public class EveLogReader
     {
+        private FileSystemWatcher FileWatcher { get; set; }
         private string LogPath { get; set; }
-        private HashSet<string> Characters { get; set; } = new HashSet<string>();
-        private HashSet<string> Paths { get; set; } = new HashSet<string>();
-        private FileSystemWatcher Watcher { get; set; }
-
+        private Dictionary<string,LogFile> LocalLogDictionary { get; set; } = new Dictionary<string,LogFile>();
         public DispatcherTimer FileRefreshTimer = new DispatcherTimer()
         {
             Interval = TimeSpan.FromSeconds(1),
             IsEnabled = false
         };
 
-        /// <summary>
-        /// Initializes a new EveLogReader. Assumes default location of log files
-        /// if not given a path. 
-        /// </summary>
-        /// <param name="logPath"></param>
-        public EveLogReader(string logPath = "")
+        public EveLogReader()
         {
-            if (logPath == "")
-            {
-                LogPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\EVE\logs\";
-                if (!Directory.Exists(LogPath))
-                    throw new DirectoryNotFoundException();
-            }
-            else
-            {
-                LogPath = logPath;
-                if (!Directory.Exists(LogPath))
-                    throw new DirectoryNotFoundException();
-            }
+            LogPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\EVE\logs\";
+            if (!Directory.Exists(LogPath))
+                throw new DirectoryNotFoundException();
 
-            // Get list of characters and most recent Local Chat paths to said characters.
-            var directory = new DirectoryInfo(LogPath + @"\ChatLogs\");
-            DateTime from_date = DateTime.Now.AddHours(-10);
-            DateTime to_date = DateTime.Now;
-            var files = directory.GetFiles()
-                .Where(file => file.LastWriteTime >= from_date && file.LastWriteTime <= to_date);
-            foreach (var filePath in files)
+            FileWatcher = new FileSystemWatcher()
             {
-                try
-                {
-                    using (var fileStream = File.Open(filePath.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    using (var streamReader = new StreamReader(fileStream))
-                    {
-                        while (!streamReader.EndOfStream)
-                        {
-                            var line = streamReader.ReadLine();
-                            if (line != null && line.Contains("Listener:        "))
-                            {
-                                var listenerName = line.Split(new string[] { "          Listener:        " }, StringSplitOptions.RemoveEmptyEntries)[0];
-                                Characters.Add(listenerName);
-                                Paths.Add(filePath.FullName);
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                    // ignored
-                }
-            }
-            // Init Refresher (to make sure we EVE actually dumps chat history to the log files, CCPLS)
-            // Actually not CCPLS theres probably a very valid reason CCP wont just dump chat logs 24/7.
-            // ...but then again they dump combat logs right away so who knows...
-            FileRefreshTimer.Tick += FileRefreshTimerOnTick;
-            FileRefreshTimer.Start();
-            FileRefreshTimerOnTick(null,null);
-
-            // Init watcher
-            Watcher = new FileSystemWatcher()
-            {
-                NotifyFilter = NotifyFilters.LastWrite,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
                 Path = LogPath,
                 IncludeSubdirectories = true,
                 Filter = "*.txt",
             };
-            Watcher.Created += ChatLogsWatcher_FileCreated;
-            Watcher.Changed += ChatLogsWathcer_FileChanged;
-            Watcher.EnableRaisingEvents = true;
+            FileWatcher.Created += FileWatcherOnCreated;
+            FileWatcher.Changed += FileWatcher_Changed;
+            FileWatcher.EnableRaisingEvents = true;
+
+            // get local chat logs from 24hrs ago
+            var directory = new DirectoryInfo(LogPath + @"\Chatlogs\");
+            var localChatFiles = directory.GetFiles()
+                .Where(file => file.LastWriteTime >= (DateTime.Now-TimeSpan.FromDays(0.1)) && file.Name.Contains("meigs2_"));
+            foreach (var localChatFile in localChatFiles)
+            {
+                LocalLogDictionary.Add(localChatFile.FullName, new LogFile(){LogPath = localChatFile.FullName, CurrentFileLength = 0});
+            }
+
+            FileRefreshTimer.Tick += FileRefreshTimer_Tick;
+            FileRefreshTimer.IsEnabled = true;
         }
 
-        private void FileRefreshTimerOnTick(object sender, EventArgs e)
+        private void FileRefreshTimer_Tick(object sender, EventArgs e)
         {
-            try
+            foreach (var localLogPath in LocalLogDictionary.Keys)
             {
-                foreach (var path in Paths)
+                var file = File.Open(localLogPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                if (LocalLogDictionary[localLogPath].CurrentFileLength < file.Length)
                 {
-                    var refreshFileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                    refreshFileStream.Close();
+                    LocalLogDictionary[localLogPath].CurrentFileLength = file.Length;
+                    Console.WriteLine(file.Name + " has been modified at " + DateTime.Now);
                 }
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-                throw;
+                file.Close();
             }
         }
 
-        private void ChatLogsWathcer_FileChanged(object sender, FileSystemEventArgs e)
+        private void FileWatcherOnCreated(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine(e.FullPath + " Changed");
+            Console.WriteLine(e.FullPath + " was created");
         }
 
-        private void ChatLogsWatcher_FileCreated(object sender, FileSystemEventArgs e)
+        private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine(e.FullPath + " Created");
+            Console.WriteLine(e.FullPath + " was changed");
         }
     }
 }
