@@ -57,8 +57,14 @@ namespace BUZZ.Core.LogReading
                 var file = File.Open(localLogPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
                 if (LocalLogDictionary[localLogPath].CurrentFileLength < file.Length)
                 {
+                    file.Seek(LocalLogDictionary[localLogPath].CurrentFileLength, SeekOrigin.Begin);
+                    var streamReader = new StreamReader(file, Encoding.Default);
+                    while (!streamReader.EndOfStream)
+                    {
+                        var line = streamReader.ReadLine();
+                        Console.WriteLine(line);
+                    }
                     LocalLogDictionary[localLogPath].CurrentFileLength = file.Length;
-                    Console.WriteLine(file.Name + " has been modified at " + DateTime.Now);
                 }
                 file.Close();
             }
