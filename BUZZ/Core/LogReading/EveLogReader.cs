@@ -40,7 +40,7 @@ namespace BUZZ.Core.LogReading
             // get local chat logs from 24hrs ago
             var directory = new DirectoryInfo(LogPath + @"\Chatlogs\");
             var localChatFiles = directory.GetFiles()
-                .Where(file => file.LastWriteTime >= (DateTime.Now-TimeSpan.FromDays(0.1)) && file.Name.Contains("meigs2_"));
+                .Where(file => file.LastWriteTime >= (DateTime.Now-TimeSpan.FromDays(0.1)) && file.Name.Contains("Local_"));
             foreach (var localChatFile in localChatFiles)
             {
                 LocalLogDictionary.Add(localChatFile.FullName, new LogFile(){LogPath = localChatFile.FullName, CurrentFileLength = 0});
