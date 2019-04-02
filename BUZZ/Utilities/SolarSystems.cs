@@ -15,13 +15,13 @@ namespace BUZZ.Utilities
 {
     public class SolarSystems
     {
-        private static Dictionary<int,string> SystemIdToNameDictionary { get; set; } = new Dictionary<int, string>();
-        private static Dictionary<string, int> NameToSystemIdDictionary { get; set; } = new Dictionary<string, int>();
-        private static Dictionary<int, EveSystem> SystemIdToSolarSystem { get; set; } = new Dictionary<int, EveSystem>();
+        public static Dictionary<int,string> SystemIdToNameDictionary { get; set; } = new Dictionary<int, string>();
+        public static Dictionary<string, int> SystemNameToIdDictionary { get; set; } = new Dictionary<string, int>();
+        public static Dictionary<int, EveSystem> SystemIdToSolarSystem { get; set; } = new Dictionary<int, EveSystem>();
         
         public static List<string> GetAllSolarSystems()
         {
-            return new List<string>(NameToSystemIdDictionary.Keys);
+            return new List<string>(SystemNameToIdDictionary.Keys);
         }
 
         public static string GetSolarSystemName(int systemId)
@@ -36,7 +36,7 @@ namespace BUZZ.Utilities
 
         public static int GetSolarSystemId(string systemName)
         {
-            return NameToSystemIdDictionary[systemName];
+            return SystemNameToIdDictionary[systemName];
         }
 
         public static void LoadSolarSystems()
@@ -59,7 +59,7 @@ namespace BUZZ.Utilities
             {
                 SystemIdToSolarSystem.Add(eveSystem.SolarSystemId,eveSystem);
                 SystemIdToNameDictionary.Add(eveSystem.SolarSystemId,eveSystem.Name);
-                NameToSystemIdDictionary.Add(eveSystem.Name,eveSystem.SolarSystemId);
+                SystemNameToIdDictionary.Add(eveSystem.Name,eveSystem.SolarSystemId);
             }
         }
 

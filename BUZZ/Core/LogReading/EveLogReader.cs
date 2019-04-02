@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using BUZZ.Utilities;
 
 namespace BUZZ.Core.LogReading
 {
@@ -13,12 +16,19 @@ namespace BUZZ.Core.LogReading
     {
         private FileSystemWatcher FileWatcher { get; set; }
         private string LogPath { get; set; }
-        private Dictionary<string,LogFile> LocalLogDictionary { get; set; } = new Dictionary<string,LogFile>();
+        private Dictionary<string,LogFile> ChatLogDictionary { get; set; } = new Dictionary<string,LogFile>();
         public DispatcherTimer FileRefreshTimer = new DispatcherTimer()
         {
             Interval = TimeSpan.FromSeconds(1),
             IsEnabled = false
         };
+
+        private readonly Regex ListenerRegex =
+            new Regex(@"^[ ]*(Listener|Empfänger|Auditeur|Слушатель):[ ]*(?<Name>.*)$", RegexOptions.Compiled);
+        private readonly Regex LocalSystemChange = new Regex(@"(\[ (?<TimeStamp>.*) \])(.+: (?<NewSystemName>.*))", RegexOptions.Compiled);
+
+        private static readonly log4net.ILog Log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public EveLogReader()
         {
@@ -35,36 +45,53 @@ namespace BUZZ.Core.LogReading
             };
             FileWatcher.Created += FileWatcherOnCreated;
             FileWatcher.Changed += FileWatcher_Changed;
-            FileWatcher.EnableRaisingEvents = true;
 
             // get local chat logs from 24hrs ago
             var directory = new DirectoryInfo(LogPath + @"\Chatlogs\");
             var localChatFiles = directory.GetFiles()
-                .Where(file => file.LastWriteTime >= (DateTime.Now-TimeSpan.FromDays(0.1)) && file.Name.Contains("Local_"));
+                .Where(file => file.LastWriteTime >= (DateTime.Now-TimeSpan.FromDays(1)) && file.Name.Contains("Local_"));
+            // add files to be checked for changes
             foreach (var localChatFile in localChatFiles)
             {
-                LocalLogDictionary.Add(localChatFile.FullName, new LogFile(){LogPath = localChatFile.FullName, CurrentFileLength = 0});
+                ChatLogDictionary.Add(localChatFile.FullName, new LogFile(){LogPath = localChatFile.FullName, CurrentFileLength = 0});
             }
+            FileRefreshTimer.Tick += CheckLogFiles;
+        }
 
-            FileRefreshTimer.Tick += FileRefreshTimer_Tick;
+        public void EnableFileWatching()
+        {
+            FileWatcher.EnableRaisingEvents = true;
             FileRefreshTimer.IsEnabled = true;
         }
 
-        private void FileRefreshTimer_Tick(object sender, EventArgs e)
+        /// <summary>
+        /// Watches relevant chat log files for changes. Due to how eve handles chat logs, a FileSystemWatcher
+        /// wont pick up OnChanged events for them until the client is closed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CheckLogFiles(object sender, EventArgs e)
         {
-            foreach (var localLogPath in LocalLogDictionary.Keys)
+            foreach (var localLogPath in ChatLogDictionary.Keys)
             {
-                var file = File.Open(localLogPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-                if (LocalLogDictionary[localLogPath].CurrentFileLength < file.Length)
+                var file = File.Open(localLogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+                // If the file length has changed, its been modified and we need to get the new info.
+                if (ChatLogDictionary[localLogPath].CurrentFileLength < file.Length)
                 {
-                    file.Seek(LocalLogDictionary[localLogPath].CurrentFileLength, SeekOrigin.Begin);
-                    var streamReader = new StreamReader(file, Encoding.Default);
+                    var lines = new List<string>();
+                    var streamReader = new StreamReader(file, Encoding.UTF8);
+
+                    file.Seek(ChatLogDictionary[localLogPath].CurrentFileLength, SeekOrigin.Begin);
                     while (!streamReader.EndOfStream)
                     {
                         var line = streamReader.ReadLine();
-                        Console.WriteLine(line);
+                        // Delete non-ASCII characters cause CCPls
+                        line = Regex.Replace(line, @"[^\u0000-\u007F]+", string.Empty);
+                        lines.Add(line);
                     }
-                    LocalLogDictionary[localLogPath].CurrentFileLength = file.Length;
+                    ParseChatLogLines(lines, ChatLogDictionary[localLogPath]);
+                    ChatLogDictionary[localLogPath].CurrentFileLength = file.Length;
                 }
                 file.Close();
             }
@@ -72,12 +99,91 @@ namespace BUZZ.Core.LogReading
 
         private void FileWatcherOnCreated(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine(e.FullPath + " was created");
+            // if path is to a local file, add it to watch list
+            if (e.FullPath.Contains(@"Local_"))
+            {
+                ChatLogDictionary.Add(e.FullPath, new LogFile());
+                Console.WriteLine(e.FullPath + " was created");
+            }
         }
 
         private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine(e.FullPath + " was changed");
         }
+
+        /// <summary>
+        /// Contains the logic for parsing chat log lines, and raises the relevant events.
+        /// </summary>
+        private void ParseChatLogLines(List<string> chatLines, LogFile chatLogFile)
+        {
+            try
+            {
+                // Check if file has never been opened, if so preform file initialization, raise relevant event
+                SystemChangedEventArgs eventArgs = new SystemChangedEventArgs();
+                if (chatLogFile.CurrentFileLength <= 0)
+                {
+                    // Get listener
+                    if (ListenerRegex.IsMatch(chatLines[8]))
+                    {
+                        chatLogFile.CurrentListener = ListenerRegex.Match(chatLines[8]).Groups["Name"].Value;
+                        eventArgs.Listener = chatLogFile.CurrentListener;
+                    }
+
+                    // Get current system
+                    foreach (var chatLine in chatLines)
+                    {
+                        if (!LocalSystemChange.IsMatch(chatLine)) continue;
+                        var systemName = LocalSystemChange.Match(chatLine).Groups["NewSystemName"].Value;
+                        // check if valid system
+                        if (SolarSystems.SystemNameToIdDictionary.TryGetValue(systemName, out var systemId))
+                        {
+                            eventArgs.NewSystemName = systemName;
+                            eventArgs.NewSystemId = systemId;
+                        }
+                    }
+                    OnSystemChanged(eventArgs);
+                }
+                // if its been analyzed before, parse the new lines for a system change.
+                else
+                {
+                    eventArgs.Listener = chatLogFile.CurrentListener;
+
+                    // Get current system
+                    foreach (var chatLine in chatLines)
+                    {
+                        if (!LocalSystemChange.IsMatch(chatLine)) continue;
+                        var systemName = LocalSystemChange.Match(chatLine).Groups["NewSystemName"].Value;
+                        // check if valid system
+                        if (SolarSystems.SystemNameToIdDictionary.TryGetValue(systemName, out var systemId))
+                        {
+                            eventArgs.NewSystemName = systemName;
+                            eventArgs.NewSystemId = systemId;
+                        }
+                    }
+                    OnSystemChanged(eventArgs);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Log.Error(e);
+                throw;
+            }
+
+            // Else, determine if its a system change
+        }
+
+        #region Events
+
+        public event EventHandler<SystemChangedEventArgs> SystemChanged;
+
+        protected virtual void OnSystemChanged(SystemChangedEventArgs eventArgs)
+        {
+            EventHandler<SystemChangedEventArgs> handler = SystemChanged;
+            handler?.Invoke(this, eventArgs);
+        }
+
+        #endregion
     }
 }

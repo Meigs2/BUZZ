@@ -86,8 +86,8 @@ namespace BUZZ.Core.Models
             {
                 OnSystemInformationUpdated(new SystemUpdatedEventArgs()
                 {
-                    NewSystemName = value.SystemName, NewSystemId = value.SolarSystemId,
-                    OldSystemId = currentSolarSystem.SolarSystemId, OldSystemName = currentSolarSystem.SystemName
+                    NewSystemName = value.SolarSystemName, NewSystemId = value.SolarSystemId,
+                    OldSystemId = currentSolarSystem.SolarSystemId, OldSystemName = currentSolarSystem.SolarSystemName
                 });
                 currentSolarSystem = value;
             }
@@ -157,7 +157,7 @@ namespace BUZZ.Core.Models
                     SolarSystemId = locationResult.Model.SolarSystemId,
                     StationId = locationResult.Model.StationId.GetValueOrDefault(),
                     StructureId = locationResult.Model.StationId.GetValueOrDefault(),
-                    SystemName = SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
+                    SolarSystemName = SolarSystems.GetSolarSystemName(locationResult.Model.SolarSystemId)
                 };
                 var onlineResult = await GetOnlineStatusAsync();
 

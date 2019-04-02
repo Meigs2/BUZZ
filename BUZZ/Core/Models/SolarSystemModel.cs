@@ -11,6 +11,6 @@ namespace BUZZ.Core.Models
         public int SolarSystemId { get; set; }
         public int? StationId { get; set; }
         public long? StructureId { get; set; }
-        public string SystemName { get; set; } = string.Empty;
+        public string SolarSystemName { get; set; } = string.Empty;
     }
 }

@@ -19,11 +19,11 @@ namespace BUZZ.Utilities
         private static readonly log4net.ILog Log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static void PerformStartupActions()
+        public static async void PerformStartupActions()
         {
             Log.Info("Logger Initialized and new BUZZ session started.");
             SolarSystems.LoadSolarSystems();
-            CharacterManager.Initialize();
+            await CharacterManager.Initialize();
         }
     }
 }

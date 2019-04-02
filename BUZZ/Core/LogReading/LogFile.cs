@@ -9,6 +9,7 @@ namespace BUZZ.Core.LogReading
     public class LogFile
     {
         public string LogPath { get; set; }
-        public long CurrentFileLength { get; set; }
+        public long CurrentFileLength { get; set; } = 0;
+        public string CurrentListener { get; set; }
     }
 }

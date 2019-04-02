@@ -42,37 +42,56 @@ namespace BUZZ.Core.CharacterManagement
 
         public DispatcherTimer AuthRefreshTimer = new DispatcherTimer()
         {
-            Interval = TimeSpan.FromMinutes(Properties.Settings.Default.CharacterAuthRefreshRateMinutes),
-            IsEnabled = false
+            Interval = TimeSpan.FromMinutes(Properties.Settings.Default.CharacterAuthRefreshRateMinutes)
         };
 
         public DispatcherTimer CharacterInfoRefreshTimer = new DispatcherTimer()
         {
-            Interval = TimeSpan.FromSeconds(Properties.Settings.Default.CharacterInfoRefreshRateSeconds),
-            IsEnabled = false
+            Interval = TimeSpan.FromMinutes(3)
         };
 
         #endregion
 
         private CharacterManager()
         {
-            LogReader = new EveLogReader();
         }
-
+        
         #region Public Methods
 
         /// <summary>
         /// Preforms startup actions for the Character side of things in BUZZ.
         /// </summary>
-        public static void Initialize()
+        public static async Task Initialize()
         {
             currentInstance = new CharacterManager();
 
             DeserializeCharacterData();
-            RefreshAccessTokensAsync();
-            RefreshCharacterInformation();
+            await RefreshAccessTokensAsync();
+            await RefreshCharacterInformation();
             SerializeCharacterData();
             SetUpRefreshTimers();
+            InitializeLogReader();
+        }
+
+        private static void InitializeLogReader()
+        {
+            CurrentInstance.LogReader = new EveLogReader();
+            CurrentInstance.LogReader.SystemChanged += CurrentInstance.LogReader_SystemChanged;
+            CurrentInstance.LogReader.EnableFileWatching();
+        }
+
+        public void LogReader_SystemChanged(object sender, SystemChangedEventArgs e)
+        {
+            var character = CurrentInstance.CharacterList.SingleOrDefault(f => f.CharacterName == e.Listener);
+            if (character == null) return;
+
+            if (character.CurrentSolarSystem.SolarSystemName != e.NewSystemName)
+            {
+                var solarSystem = new SolarSystemModel();
+                solarSystem.SolarSystemId = e.NewSystemId;
+                solarSystem.SolarSystemName = e.NewSystemName;
+                character.CurrentSolarSystem = solarSystem;
+            }
         }
 
         #region Timer Methods
@@ -98,28 +117,27 @@ namespace BUZZ.Core.CharacterManagement
 
         #endregion
 
-        private static void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
+        private static async void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
         {
-            RefreshCharacterInformation();
+            await RefreshCharacterInformation();
         }
 
-        private static void AuthRefreshTimer_Tick(object sender, EventArgs e)
+        private static async void AuthRefreshTimer_Tick(object sender, EventArgs e)
         {
-            RefreshAccessTokensAsync();
+            await RefreshAccessTokensAsync();
             SerializeCharacterData();
         }
 
-        public static void RefreshCharacterInformation()
+        public static async Task RefreshCharacterInformation()
         {
             try
             {
+                var taskList = new List<Task>();
                 foreach (var buzzCharacter in CurrentInstance.CharacterList)
                 {
-                    ThreadPool.QueueUserWorkItem(async a =>
-                    {
-                        await buzzCharacter.RefreshCharacterInformation();
-                    });
+                    taskList.Add(buzzCharacter.RefreshCharacterInformation());
                 }
+                await Task.WhenAll(taskList.ToArray());
             }
             catch (Exception e)
             {
@@ -133,17 +151,17 @@ namespace BUZZ.Core.CharacterManagement
             await character.RefreshCharacterInformation();
         }
 
-        private static void RefreshAccessTokensAsync()
+        private static async Task RefreshAccessTokensAsync()
         {
             try
             {
-                foreach (var buzzCharacter in CurrentInstance.CharacterList)
+                var taskList = new List<Task>();
+                foreach (var buzzCharacter in CharacterManager.currentInstance.CharacterList)
                 {
-                    ThreadPool.QueueUserWorkItem(async a =>
-                    {
-                        await buzzCharacter.RefreshAuthToken();
-                    });
+                    taskList.Add(buzzCharacter.RefreshAuthToken());
                 }
+
+                await Task.WhenAll(taskList.ToArray());
             }
             catch (Exception e)
             {

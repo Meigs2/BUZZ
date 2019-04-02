@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -55,9 +56,9 @@ namespace BUZZ.Core.CharacterManagement
             DataGrid.ItemsSource = CharacterManager.CurrentInstance.CharacterList;
         }
 
-        private void CharacterManagementWindow_OnClosing(object sender, CancelEventArgs e)
+        private async void CharacterManagementWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            CharacterManager.RefreshCharacterInformation();
+            await CharacterManager.RefreshCharacterInformation();
             CharacterManager.SerializeCharacterData();
         }
 
