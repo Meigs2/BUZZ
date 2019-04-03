@@ -49,12 +49,14 @@ namespace BUZZ.Core.LogReading
             // get local chat logs from 24hrs ago
             var directory = new DirectoryInfo(LogPath + @"\Chatlogs\");
             var localChatFiles = directory.GetFiles()
-                .Where(file => file.LastWriteTime >= (DateTime.Now-TimeSpan.FromDays(1)) && file.Name.Contains("Local_"));
-            // add files to be checked for changes
+                .Where(file => file.LastWriteTime >= (DateTime.Now-TimeSpan.FromDays(1)) && file.Name.Contains("Local_"))
+                .OrderByDescending(f => f.LastWriteTime).ToList();
+
             foreach (var localChatFile in localChatFiles)
             {
                 ChatLogDictionary.Add(localChatFile.FullName, new LogFile(){LogPath = localChatFile.FullName, CurrentFileLength = 0});
             }
+
             FileRefreshTimer.Tick += CheckLogFiles;
         }
 
@@ -102,8 +104,11 @@ namespace BUZZ.Core.LogReading
             // if path is to a local file, add it to watch list
             if (e.FullPath.Contains(@"Local_"))
             {
-                ChatLogDictionary.Add(e.FullPath, new LogFile());
-                Console.WriteLine(e.FullPath + " was created");
+                if (!ChatLogDictionary.ContainsKey(e.FullPath))
+                {
+                    ChatLogDictionary.Add(e.FullPath, new LogFile());
+                    Console.WriteLine(e.FullPath + " was created");
+                }
             }
         }
 

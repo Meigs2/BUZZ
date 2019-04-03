@@ -187,6 +187,24 @@ namespace BUZZ.Core.Models
             }
         }
 
+        public async Task RefreshCharacterOnlineStatus()
+        {
+            try
+            {
+                var onlineResult = await GetOnlineStatusAsync();
+
+                CharacterOnlineInfo = onlineResult.Model;
+                IsOnline = CharacterOnlineInfo.Online;
+                OnCharacterInformationUpdated();
+            }
+            catch (Exception e)
+            {
+                Log.Error("Unable refresh character information for " + CharacterName);
+                Log.Error(e);
+            }
+
+        }
+
         #region ESI Methods
 
         public async Task<ESIModelDTO<CharacterOnline>> GetOnlineStatusAsync()

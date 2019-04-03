@@ -47,7 +47,7 @@ namespace BUZZ.Core.CharacterManagement
 
         public DispatcherTimer CharacterInfoRefreshTimer = new DispatcherTimer()
         {
-            Interval = TimeSpan.FromMinutes(3)
+            Interval = TimeSpan.FromMinutes(0.5)
         };
 
         #endregion
@@ -119,13 +119,32 @@ namespace BUZZ.Core.CharacterManagement
 
         private static async void CharacterInfoRefreshTimer_Tick(object sender, EventArgs e)
         {
-            await RefreshCharacterInformation();
+            await RefreshCharacterOnlineStatus();
+            //await RefreshCharacterInformation();
         }
 
         private static async void AuthRefreshTimer_Tick(object sender, EventArgs e)
         {
             await RefreshAccessTokensAsync();
             SerializeCharacterData();
+        }
+
+        public static async Task RefreshCharacterOnlineStatus()
+        {
+            try
+            {
+                var taskList = new List<Task>();
+                foreach (var buzzCharacter in CurrentInstance.CharacterList)
+                {
+                    taskList.Add(buzzCharacter.RefreshCharacterInformation());
+                }
+                await Task.WhenAll(taskList.ToArray());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public static async Task RefreshCharacterInformation()
